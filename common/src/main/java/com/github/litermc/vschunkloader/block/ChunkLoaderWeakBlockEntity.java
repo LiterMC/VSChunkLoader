@@ -26,7 +26,7 @@ public class ChunkLoaderWeakBlockEntity extends ChunkLoaderBlockEntity {
 	}
 
 	public int getMaxUseTime() {
-		return 20 * 10;
+		return 20 * 60; // 1 min
 	}
 
 	@Override

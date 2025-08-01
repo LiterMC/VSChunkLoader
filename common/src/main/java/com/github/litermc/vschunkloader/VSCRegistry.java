@@ -49,6 +49,7 @@ public final class VSCRegistry {
 					.strength(5f)
 					.sound(SoundType.METAL)
 					.pushReaction(PushReaction.IGNORE)
+					.noOcclusion()
 					.isRedstoneConductor((state, level, pos) -> false)
 					.requiresCorrectToolForDrops()));
 
@@ -58,6 +59,7 @@ public final class VSCRegistry {
 					.strength(3f)
 					.sound(SoundType.STONE)
 					.pushReaction(PushReaction.IGNORE)
+					.noOcclusion()
 					.isRedstoneConductor((state, level, pos) -> false)
 					.requiresCorrectToolForDrops()));
 
