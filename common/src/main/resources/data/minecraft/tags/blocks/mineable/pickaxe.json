@@ -1,0 +1,7 @@
+{
+	"replace": false,
+	"values": [
+		"vschunkloader:chunk_loader",
+		"vschunkloader:chunk_loader_weak"
+	]
+}

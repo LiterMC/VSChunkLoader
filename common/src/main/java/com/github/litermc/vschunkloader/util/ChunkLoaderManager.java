@@ -50,6 +50,7 @@ public final class ChunkLoaderManager extends SavedData {
 	}
 
 	public void deactivateChunkLoader(final BlockPos pos) {
+		System.out.println("removing: " + pos);
 		this.chunkLoaders.remove(pos);
 		this.setDirty();
 	}

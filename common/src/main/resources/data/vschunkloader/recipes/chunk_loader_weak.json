@@ -1,0 +1,32 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"ITI",
+		"EBO",
+		"IHI"
+	],
+	"key": {
+		"B": {
+			"item": "minecraft:lordstone"
+		},
+		"E": {
+			"item": "minecraft:emerald"
+		},
+		"H": {
+			"item": "minecraft:honey_block"
+		},
+		"I": {
+			"item": "minecraft:iron_ingot"
+		},
+		"O": {
+			"item": "minecraft:compass"
+		},
+		"T": {
+			"item": "minecraft:torch"
+		}
+	},
+	"result": {
+		"item": "vschunkloader:chunk_loader_weak",
+		"count": 1
+	}
+}

@@ -6,6 +6,8 @@ package com.github.litermc.vschunkloader;
 
 import com.github.litermc.vschunkloader.block.ChunkLoaderBlock;
 import com.github.litermc.vschunkloader.block.ChunkLoaderBlockEntity;
+import com.github.litermc.vschunkloader.block.ChunkLoaderWeakBlock;
+import com.github.litermc.vschunkloader.block.ChunkLoaderWeakBlockEntity;
 import com.github.litermc.vschunkloader.platform.PlatformHelper;
 import com.github.litermc.vschunkloader.platform.RegistrationHelper;
 import com.github.litermc.vschunkloader.platform.RegistryEntry;
@@ -19,6 +21,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -43,7 +46,17 @@ public final class VSCRegistry {
 		public static final RegistryEntry<Block> CHUNK_LOADER =
 			REGISTRY.register("chunk_loader", () -> new ChunkLoaderBlock(
 				BlockBehaviour.Properties.of()
+					.strength(5f)
+					.sound(SoundType.METAL)
+					.pushReaction(PushReaction.IGNORE)
+					.isRedstoneConductor((state, level, pos) -> false)
+					.requiresCorrectToolForDrops()));
+
+		public static final RegistryEntry<Block> CHUNK_LOADER_WEAK =
+			REGISTRY.register("chunk_loader_weak", () -> new ChunkLoaderWeakBlock(
+				BlockBehaviour.Properties.of()
 					.strength(3f)
+					.sound(SoundType.STONE)
 					.pushReaction(PushReaction.IGNORE)
 					.isRedstoneConductor((state, level, pos) -> false)
 					.requiresCorrectToolForDrops()));
@@ -61,6 +74,9 @@ public final class VSCRegistry {
 		public static final RegistryEntry<BlockEntityType<ChunkLoaderBlockEntity>> CHUNK_LOADER =
 			ofBlock(Blocks.CHUNK_LOADER, ChunkLoaderBlockEntity::new);
 
+		public static final RegistryEntry<BlockEntityType<ChunkLoaderWeakBlockEntity>> CHUNK_LOADER_WEAK =
+			ofBlock(Blocks.CHUNK_LOADER_WEAK, ChunkLoaderWeakBlockEntity::new);
+
 		private BlockEntities() {}
 	}
 
@@ -75,11 +91,19 @@ public final class VSCRegistry {
 			return REGISTRY.register(block.id().getPath(), () -> supplier.apply(block.get(), properties()));
 		}
 
-		public static final RegistryEntry<BlockItem> CHUNK_LOADER = ofBlock(Blocks.CHUNK_LOADER, BlockItem::new);
+		public static final RegistryEntry<BlockItem> CHUNK_LOADER = ofBlock(
+			Blocks.CHUNK_LOADER,
+			(block, props) -> new BlockItem(block, props.rarity(Rarity.EPIC).stacksTo(1))
+		);
+
+		public static final RegistryEntry<BlockItem> CHUNK_LOADER_WEAK = ofBlock(
+			Blocks.CHUNK_LOADER_WEAK,
+			(block, props) -> new BlockItem(block, props.rarity(Rarity.UNCOMMON).stacksTo(16))
+		);
 
 		private Items() {}
 	}
-	
+
 	static class CreativeTabs {
 		static final RegistrationHelper<CreativeModeTab> REGISTRY = PlatformHelper.get().createRegistrationHelper(Registries.CREATIVE_MODE_TAB);
 
@@ -88,6 +112,7 @@ public final class VSCRegistry {
 			.title(Component.translatable("itemGroup.vschunkloader"))
 			.displayItems((context, out) -> {
 				out.accept(Items.CHUNK_LOADER.get());
+				out.accept(Items.CHUNK_LOADER_WEAK.get());
 			})
 			.build());
 	}

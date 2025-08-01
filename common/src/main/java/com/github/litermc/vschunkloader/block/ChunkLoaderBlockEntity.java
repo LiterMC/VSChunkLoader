@@ -9,16 +9,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.util.MinecraftPlayer;
 
-import java.lang.ref.WeakReference;
 import java.util.UUID;
 import java.nio.charset.StandardCharsets;
 
@@ -30,8 +28,12 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	private ServerPlayer fakePlayer = null;
 	private MinecraftPlayer playerData = null;
 
+	protected ChunkLoaderBlockEntity(final BlockEntityType<? extends ChunkLoaderBlockEntity> type, final BlockPos pos, final BlockState state) {
+		super(type, pos, state);
+	}
+
 	public ChunkLoaderBlockEntity(final BlockPos pos, final BlockState state) {
-		super(VSCRegistry.BlockEntities.CHUNK_LOADER.get(), pos, state);
+		this(VSCRegistry.BlockEntities.CHUNK_LOADER.get(), pos, state);
 	}
 
 	public boolean isRunning() {
@@ -60,10 +62,11 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		if (avaliable <= 0) {
 			return 0;
 		}
+		final int received = Math.min(avaliable, maxReceive);
 		if (!simulate) {
-			this.energyStored += Math.min(avaliable, maxReceive);
+			this.energyStored += received;
 		}
-		return Math.max(maxReceive - avaliable, 0);
+		return received;
 	}
 
 	public int getEnergyStored() {
@@ -132,7 +135,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	public void onDeactivated() {
 		final ServerLevel level = (ServerLevel)(this.getLevel());
 		ChunkLoaderManager.get(level).deactivateChunkLoader(this.getBlockPos());
-		if (this.playerData != null) {
+		if (this.fakePlayer != null) {
 			this.fakePlayer.discard();
 			this.fakePlayer = null;
 			this.playerData = null;

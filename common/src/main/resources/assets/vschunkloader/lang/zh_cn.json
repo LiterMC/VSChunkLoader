@@ -1,4 +1,5 @@
 {
 	"block.vschunkloader.chunk_loader": "区块加载器",
+	"block.vschunkloader.chunk_loader_weak": "脆弱的区块加载器",
 	"itemGroup.vschunkloader": "VS 区块加载器"
 }

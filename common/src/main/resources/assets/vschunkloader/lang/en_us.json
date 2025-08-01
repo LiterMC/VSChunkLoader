@@ -1,4 +1,5 @@
 {
 	"block.vschunkloader.chunk_loader": "Chunk Loader",
+	"block.vschunkloader.chunk_loader_weak": "Chunk Loader Weak",
 	"itemGroup.vschunkloader": "VS Chunk Loader"
 }
