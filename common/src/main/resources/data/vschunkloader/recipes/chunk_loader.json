@@ -1,25 +1,25 @@
 {
 	"type": "minecraft:crafting_shaped",
 	"pattern": [
-		"IOI",
-		"PCP",
-		"IDI"
+		"GCG",
+		"LBO",
+		"GHG"
 	],
 	"key": {
 		"C": {
-			"item": "minecraft:comparator"
+			"item": "minecraft:creeper_head"
 		},
-		"D": {
-			"item": "minecraft:dispenser"
+		"G": {
+			"item": "minecraft:gold_ingot"
 		},
-		"I": {
-			"item": "minecraft:iron_ingot"
+		"H": {
+			"item": "minecraft:honey_block"
+		},
+		"L": {
+			"item": "minecraft:crying_obsidian"
 		},
 		"O": {
 			"item": "minecraft:compass"
-		},
-		"P": {
-			"item": "minecraft:piston"
 		}
 	},
 	"result": {
