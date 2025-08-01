@@ -6,6 +6,9 @@
 		"GHG"
 	],
 	"key": {
+		"B": {
+			"item": "minecraft:beacon"
+		},
 		"C": {
 			"item": "minecraft:creeper_head"
 		},
