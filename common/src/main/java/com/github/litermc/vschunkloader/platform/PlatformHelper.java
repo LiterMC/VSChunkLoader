@@ -58,6 +58,8 @@ public interface PlatformHelper {
 
 	boolean isModLoaded(String modid);
 
+	void queueTask(int delay, Runnable task);
+
 	/**
 	 * Wrap a Minecraft registry in our own abstraction layer.
 	 *

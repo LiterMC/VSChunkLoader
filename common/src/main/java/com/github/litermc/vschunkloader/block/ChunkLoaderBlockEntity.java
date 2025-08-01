@@ -3,12 +3,14 @@ package com.github.litermc.vschunkloader.block;
 import com.github.litermc.vschunkloader.VSCRegistry;
 import com.github.litermc.vschunkloader.platform.PlatformHelper;
 import com.github.litermc.vschunkloader.util.ChunkLoaderManager;
+import com.github.litermc.vschunkloader.util.IChunkLoaderFakePlayer;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,12 +26,17 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	private int activating = 0;
 	private boolean wasActivated = false;
 	private int energyStored = 0;
+	private boolean deactivating = false;
 
+	protected final GameProfile fakeGameProfile;
 	private ServerPlayer fakePlayer = null;
 	private MinecraftPlayer playerData = null;
 
 	protected ChunkLoaderBlockEntity(final BlockEntityType<? extends ChunkLoaderBlockEntity> type, final BlockPos pos, final BlockState state) {
 		super(type, pos, state);
+		final String name = "ChunkLoader:" + pos.asLong();
+		final UUID uuid = UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8));
+		this.fakeGameProfile = new GameProfile(uuid, name);
 	}
 
 	public ChunkLoaderBlockEntity(final BlockPos pos, final BlockState state) {
@@ -40,18 +47,24 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		return this.activating > 0;
 	}
 
+	public boolean isDeactivating() {
+		return this.deactivating;
+	}
+
+	public boolean shouldTrack() {
+		return this.isRunning() || this.playerData != null;
+	}
+
 	public MinecraftPlayer getOrCreatePlayerData() {
 		if (this.playerData == null) {
 			final ServerLevel level = ((ServerLevel)(this.getLevel()));
+			final BlockPos blockPos = this.getBlockPos();
 
-			final UUID uuid = UUID.nameUUIDFromBytes(("ChunkLoader:" + this.getBlockPos().asLong()).getBytes(StandardCharsets.UTF_8));
-			this.fakePlayer = PlatformHelper.get().createFakePlayer(
-				level,
-				new GameProfile(uuid, "[ChunkLoader:" + this.getBlockPos() + "]")
-			);
+			this.fakePlayer = PlatformHelper.get().createFakePlayer(level, this.fakeGameProfile);
+			((IChunkLoaderFakePlayer)(this.fakePlayer)).bindChunkLoader(this);
 			this.playerData = new MinecraftPlayer(this.fakePlayer);
-			final Vec3 pos = VSGameUtilsKt.toWorldCoordinates(level, this.getBlockPos().getCenter());
-			this.fakePlayer.absMoveTo(pos.x, pos.y, pos.z);
+			final Vec3 pos = VSGameUtilsKt.toWorldCoordinates(level, blockPos.getCenter());
+			this.fakePlayer.moveTo(pos.x, pos.y, pos.z);
 			level.addNewPlayer(this.fakePlayer);
 		}
 		return this.playerData;
@@ -100,17 +113,30 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 
 	public void serverTick() {
 		final ServerLevel level = (ServerLevel)(this.getLevel());
-		if (this.activating <= 0) {
+		if (level.getBlockEntity(this.getBlockPos()) != this) {
+			if (this.fakePlayer != null) {
+				this.fakePlayer.discard();
+				this.fakePlayer = null;
+				this.playerData = null;
+			}
+			this.setRemoved();
+			return;
+		}
+		if (this.isDeactivating()) {
+			return;
+		}
+		if (this.activating <= 1) {
 			final int newEnergy = this.energyStored - this.getEnergyConsumeRate();
 			if (newEnergy >= 0) {
-				this.activating = 20;
+				this.activating = 21;
 				this.energyStored = newEnergy;
+				this.setChanged();
 			}
 		}
 		if (!this.isRunning()) {
 			if (this.wasActivated) {
 				this.wasActivated = false;
-				this.onDeactivated();
+				this.queueDeactivate();
 				this.setChanged();
 			}
 			return;
@@ -123,7 +149,8 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		}
 		this.getOrCreatePlayerData();
 		final Vec3 pos = this.getBlockPos().getCenter();
-		this.fakePlayer.absMoveTo(pos.x, pos.y, pos.z);
+		this.fakePlayer.setOldPosAndRot();
+		this.fakePlayer.setPos(pos.x, pos.y, pos.z);
 		level.getChunkSource().move(this.fakePlayer);
 	}
 
@@ -132,13 +159,16 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		ChunkLoaderManager.get(level).activateChunkLoader(this.getBlockPos());
 	}
 
-	public void onDeactivated() {
+	public void queueDeactivate() {
 		final ServerLevel level = (ServerLevel)(this.getLevel());
-		ChunkLoaderManager.get(level).deactivateChunkLoader(this.getBlockPos());
-		if (this.fakePlayer != null) {
-			this.fakePlayer.discard();
-			this.fakePlayer = null;
-			this.playerData = null;
-		}
+		final BlockPos blockPos = this.getBlockPos();
+		PlatformHelper.get().queueTask(20, () -> {
+			ChunkLoaderManager.get(level).deactivateChunkLoader(blockPos);
+			if (this.playerData != null) {
+				level.removePlayerImmediately(this.fakePlayer, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
+				this.fakePlayer = null;
+				this.playerData = null;
+			}
+		});
 	}
 }

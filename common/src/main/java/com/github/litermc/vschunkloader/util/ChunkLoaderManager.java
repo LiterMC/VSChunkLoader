@@ -50,7 +50,6 @@ public final class ChunkLoaderManager extends SavedData {
 	}
 
 	public void deactivateChunkLoader(final BlockPos pos) {
-		System.out.println("removing: " + pos);
 		this.chunkLoaders.remove(pos);
 		this.setDirty();
 	}
@@ -60,6 +59,6 @@ public final class ChunkLoaderManager extends SavedData {
 			.map(this.level::getBlockEntity)
 			.filter(ChunkLoaderBlockEntity.class::isInstance)
 			.map(ChunkLoaderBlockEntity.class::cast)
-			.filter(ChunkLoaderBlockEntity::isRunning);
+			.filter(ChunkLoaderBlockEntity::shouldTrack);
 	}
 }

@@ -43,7 +43,11 @@ public class ChunkLoaderWeakBlockEntity extends ChunkLoaderBlockEntity {
 
 	@Override
 	public void serverTick() {
+		final boolean isDeactivating = this.isDeactivating();
 		super.serverTick();
+		if (isDeactivating || this.isRemoved()) {
+			return;
+		}
 		if (this.tickUsed >= this.getMaxUseTime()) {
 			this.getLevel().destroyBlock(this.getBlockPos(), false);
 			return;

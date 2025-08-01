@@ -6,7 +6,7 @@
 			"entries": [
 				{
 					"type": "minecraft:item",
-					"name": "vschunkloader:chunk_loader",
+					"name": "vschunkloader:chunk_loader"
 				}
 			]
 		}

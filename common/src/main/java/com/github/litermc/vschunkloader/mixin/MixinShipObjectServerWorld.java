@@ -9,12 +9,13 @@ import net.minecraft.server.level.ServerLevel;
 import org.valkyrienskies.core.apigame.world.IPlayer;
 import org.valkyrienskies.core.impl.game.ships.ShipObjectServerWorld;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Mixin(ShipObjectServerWorld.class)
 public abstract class MixinShipObjectServerWorld {
@@ -26,6 +27,6 @@ public abstract class MixinShipObjectServerWorld {
 				.map(ChunkLoaderBlockEntity::getOrCreatePlayerData)
 				.forEach(playerSet::add);
 		}
-		return playerSet;
+		return Collections.unmodifiableSet(playerSet);
 	}
 }

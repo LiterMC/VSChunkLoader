@@ -9,6 +9,7 @@ import com.github.litermc.vschunkloader.network.MessageType;
 import com.github.litermc.vschunkloader.network.NetworkMessage;
 import com.github.litermc.vschunkloader.network.client.ClientNetworkContext;
 import com.github.litermc.vschunkloader.network.container.ContainerData;
+import com.github.litermc.vschunkloader.util.TaskUtil;
 
 import com.google.auto.service.AutoService;
 import com.google.gson.JsonArray;
@@ -97,6 +98,11 @@ public class PlatformHelperImpl implements PlatformHelper {
 	@Override
 	public boolean isModLoaded(String modid) {
 		return ModList.get().isLoaded(modid);
+	}
+
+	@Override
+	public void queueTask(int delay, Runnable task) {
+		TaskUtil.queueTickStart(delay, task);
 	}
 
 	@Override

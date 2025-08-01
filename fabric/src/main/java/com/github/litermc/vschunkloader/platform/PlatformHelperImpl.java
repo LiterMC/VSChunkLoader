@@ -102,6 +102,11 @@ public final class PlatformHelperImpl implements PlatformHelper {
 		return FabricLoader.getInstance().isModLoaded(modid);
 	}
 
+	@Override
+	public void queueTask(int delay, Runnable task) {
+		throw new UnsupportedOperationException("TODO");
+	}
+
 	@SuppressWarnings("unchecked")
 	private static <T> Registry<T> getRegistry(ResourceKey<Registry<T>> id) {
 		var registry = (Registry<T>) BuiltInRegistries.REGISTRY.get(id.location());
