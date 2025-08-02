@@ -53,6 +53,19 @@ repositories {
 	exclusiveContent {
 		forRepository {
 			maven {
+				name = 'FabricMC'
+				url = 'https://maven.fabricmc.net'
+			}
+		}
+		filter {
+			includeGroup('teamreborn')
+			includeGroupAndSubgroups('net.fabricmc')
+		}
+	}
+
+	exclusiveContent {
+		forRepository {
+			maven {
 				name = 'Terraformers'
 				url = 'https://maven.terraformersmc.com/'
 			}

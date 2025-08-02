@@ -18,10 +18,14 @@
 	"entrypoints": {
 		"main": [
 			"com.github.litermc.vschunkloader.VSChunkLoaderMod"
+		],
+		"client": [
+			"com.github.litermc.vschunkloader.client.VSChunkLoaderClientMod"
 		]
 	},
 	"mixins": [
-		"${mod_id}.mixins.json"
+		"${mod_id}.mixins.json",
+		"${mod_id}.fabric.mixins.json"
 	],
 	"depends": {
 		"fabric": "*",

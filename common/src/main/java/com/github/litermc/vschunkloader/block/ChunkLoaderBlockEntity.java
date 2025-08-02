@@ -15,6 +15,8 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	private boolean wasActivated = true;
 	private int energyStored = 0;
 
+	Object energyStorage = null;
+
 	protected ChunkLoaderBlockEntity(final BlockEntityType<? extends ChunkLoaderBlockEntity> type, final BlockPos pos, final BlockState state) {
 		super(type, pos, state);
 	}
