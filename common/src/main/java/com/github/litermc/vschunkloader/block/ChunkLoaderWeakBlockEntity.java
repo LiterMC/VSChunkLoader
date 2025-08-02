@@ -2,17 +2,11 @@ package com.github.litermc.vschunkloader.block;
 
 import com.github.litermc.vschunkloader.VSCRegistry;
 
-import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
-
-import org.valkyrienskies.mod.common.VSGameUtilsKt;
-import org.valkyrienskies.mod.common.util.MinecraftPlayer;
 
 public class ChunkLoaderWeakBlockEntity extends ChunkLoaderBlockEntity {
 	private int tickUsed = 0;
@@ -43,13 +37,13 @@ public class ChunkLoaderWeakBlockEntity extends ChunkLoaderBlockEntity {
 
 	@Override
 	public void serverTick() {
-		final boolean isDeactivating = this.isDeactivating();
 		super.serverTick();
-		if (isDeactivating || this.isRemoved()) {
+		if (this.isRemoved()) {
 			return;
 		}
 		if (this.tickUsed >= this.getMaxUseTime()) {
 			this.getLevel().destroyBlock(this.getBlockPos(), false);
+			this.setRemoved();
 			return;
 		}
 		if (this.isRunning()) {

@@ -1,9 +1,13 @@
 package com.github.litermc.vschunkloader.util;
 
-import com.github.litermc.vschunkloader.block.ChunkLoaderBlockEntity;
+import net.minecraft.world.phys.Vec3;
 
 public interface IChunkLoaderFakePlayer {
-	void bindChunkLoader(ChunkLoaderBlockEntity be);
+	void bindPosition(Vec3 position);
 
-	ChunkLoaderBlockEntity getChunkLoader();
+	void refreshCountDown();
+
+	void startDiscard();
+
+	boolean isDiscarding();
 }

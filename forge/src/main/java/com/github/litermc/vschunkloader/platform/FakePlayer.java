@@ -5,14 +5,16 @@
 package com.github.litermc.vschunkloader.platform;
 
 import com.github.litermc.vschunkloader.util.IChunkLoaderFakePlayer;
-import com.github.litermc.vschunkloader.block.ChunkLoaderBlockEntity;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
 
 public final class FakePlayer extends net.minecraftforge.common.util.FakePlayer implements IChunkLoaderFakePlayer {
-	private ChunkLoaderBlockEntity be;
+	private Vec3 position;
+	private int countDown = 21;
+	private int discarding = 0;
 
 	private FakePlayer(ServerLevel serverLevel, GameProfile gameProfile) {
 		super(serverLevel, gameProfile);
@@ -20,16 +22,6 @@ public final class FakePlayer extends net.minecraftforge.common.util.FakePlayer 
 
 	static FakePlayer create(ServerLevel serverLevel, GameProfile profile) {
 		return new FakePlayer(serverLevel, profile);
-	}
-
-	@Override
-	public void bindChunkLoader(ChunkLoaderBlockEntity be) {
-		this.be = be;
-	}
-
-	@Override
-	public ChunkLoaderBlockEntity getChunkLoader() {
-		return this.be;
 	}
 
 	@Override
@@ -43,9 +35,42 @@ public final class FakePlayer extends net.minecraftforge.common.util.FakePlayer 
 	}
 
 	@Override
+	public void bindPosition(final Vec3 position) {
+		this.position = position;
+		this.moveTo(position);
+	}
+
+	@Override
+	public void refreshCountDown() {
+		this.countDown = 21;
+	}
+
+	@Override
+	public void startDiscard() {
+		this.discarding = 1;
+	}
+
+	@Override
+	public boolean isDiscarding() {
+		return this.discarding > 0;
+	}
+
+	@Override
 	public void tick() {
-		if (this.be == null || this.be.isRemoved()) {
-			this.discard();
+		if (this.discarding > 0) {
+			this.discarding++;
+			if (this.discarding > 20) {
+				this.discard();
+			}
+			return;
 		}
+		if (this.countDown <= 0) {
+			this.startDiscard();
+			return;
+		}
+		this.setOldPosAndRot();
+		this.setPos(position);
+		this.countDown--;
+		this.serverLevel().getChunkSource().move(this);
 	}
 }

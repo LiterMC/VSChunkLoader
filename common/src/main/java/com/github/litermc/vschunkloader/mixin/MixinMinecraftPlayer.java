@@ -19,10 +19,8 @@ public abstract class MixinMinecraftPlayer {
 
 	@Inject(method = "getDimension", at = @At("HEAD"), remap = false, cancellable = true)
 	public void getDimension(final CallbackInfoReturnable<String> cir) {
-		if (this.getPlayer() instanceof IChunkLoaderFakePlayer fakePlayer) {
-			if (!fakePlayer.getChunkLoader().isRunning()) {
-				cir.setReturnValue("");
-			}
+		if (this.getPlayer() instanceof IChunkLoaderFakePlayer fakePlayer && fakePlayer.isDiscarding()) {
+			cir.setReturnValue("");
 		}
 	}
 }
