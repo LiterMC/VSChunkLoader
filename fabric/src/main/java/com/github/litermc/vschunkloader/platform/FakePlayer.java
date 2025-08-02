@@ -18,6 +18,7 @@ public final class FakePlayer extends net.fabricmc.fabric.api.entity.FakePlayer 
 
 	private FakePlayer(ServerLevel serverLevel, GameProfile gameProfile) {
 		super(serverLevel, gameProfile);
+		this.setInvulnerable(true);
 	}
 
 	static FakePlayer create(ServerLevel serverLevel, GameProfile profile) {
@@ -31,6 +32,41 @@ public final class FakePlayer extends net.fabricmc.fabric.api.entity.FakePlayer 
 
 	@Override
 	public boolean broadcastToPlayer(ServerPlayer player) {
+		return false;
+	}
+
+	@Override
+	public boolean isAttackable() {
+		return false;
+	}
+
+	@Override
+	public boolean isInvulnerable() {
+		return true;
+	}
+
+	@Override
+	public boolean canBeSeenAsEnemy() {
+		return false;
+	}
+
+	@Override
+	public boolean canBeSeenByAnyone() {
+		return false;
+	}
+
+	@Override
+	public boolean isPickable() {
+		return false;
+	}
+
+	@Override
+	public boolean isPushable() {
+		return false;
+	}
+
+	@Override
+	public boolean isInvisible() {
 		return false;
 	}
 
