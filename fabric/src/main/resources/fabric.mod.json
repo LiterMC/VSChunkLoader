@@ -17,10 +17,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.github.litermc.vschunkloader.VSChunkLoaderMod"
+			"${group}.VSChunkLoaderMod"
 		],
 		"client": [
-			"com.github.litermc.vschunkloader.client.VSChunkLoaderClientMod"
+			"${group}.client.VSChunkLoaderClientMod"
 		]
 	},
 	"mixins": [

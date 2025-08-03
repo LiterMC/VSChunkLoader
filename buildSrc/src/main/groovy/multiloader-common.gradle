@@ -276,19 +276,21 @@ processResources {
 	var expandProps = [
 			'version'                      : version,
 			'group'                        : project.group, // Else we target the task's group.
+			'java_version'                 : java_version,
+
 			'minecraft_version'            : minecraft_version,
 			'minecraft_version_range'      : minecraft_version_range,
 			'fabric_loader_version'        : fabric_loader_version,
 			'forge_version'                : forge_version,
 			'forge_loader_version_range'   : forge_loader_version_range,
+
 			'mod_name'                     : mod_name,
 			'mod_author'                   : mod_author,
 			'mod_id'                       : mod_id,
 			'license'                      : license,
+			'credits'                      : credits,
 			'description'                  : project.description,
 			'github_repo'                  : github_repo,
-			'credits'                      : credits,
-			'java_version'                 : java_version
 	]
 
 	var jsonExpandProps = expandProps.collectEntries {
