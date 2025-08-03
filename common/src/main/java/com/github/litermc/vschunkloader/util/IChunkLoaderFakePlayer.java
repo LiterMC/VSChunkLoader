@@ -5,6 +5,8 @@ import net.minecraft.world.phys.Vec3;
 public interface IChunkLoaderFakePlayer {
 	void bindPosition(Vec3 position);
 
+	void setDiscardCallback(Runnable callback);
+
 	void refreshCountDown();
 
 	void startDiscard();

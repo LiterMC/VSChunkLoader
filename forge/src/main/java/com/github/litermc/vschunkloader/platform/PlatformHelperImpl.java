@@ -5,6 +5,7 @@
 package com.github.litermc.vschunkloader.platform;
 
 import com.github.litermc.vschunkloader.Constants;
+import com.github.litermc.vschunkloader.config.ConfigFile;
 import com.github.litermc.vschunkloader.network.MessageType;
 import com.github.litermc.vschunkloader.network.NetworkMessage;
 import com.github.litermc.vschunkloader.network.client.ClientNetworkContext;
@@ -88,6 +89,11 @@ public class PlatformHelperImpl implements PlatformHelper {
 	@Override
 	public boolean isDevelopmentEnvironment() {
 		return !FMLLoader.isProduction();
+	}
+
+	@Override
+	public ConfigFile.Builder createConfigBuilder() {
+		return new ForgeConfigFile.Builder();
 	}
 
 	@Override

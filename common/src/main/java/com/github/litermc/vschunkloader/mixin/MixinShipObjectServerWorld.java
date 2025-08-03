@@ -32,7 +32,7 @@ public abstract class MixinShipObjectServerWorld {
 	public Set<? extends IPlayer> setPlayers(final Set<? extends IPlayer> players) {
 		final HashSet<IPlayer> playerSet = new HashSet<>(players);
 		for (final ServerLevel level : PlatformHelper.get().getCurrentServer().getAllLevels()) {
-			ChunkLoaderManager.get(level).streamActiveChunkLoaders()
+			ChunkLoaderManager.get(level).streamChunkLoaders()
 				.map(ChunkLoaderPlayerHolder::getPlayerData)
 				.forEach(playerSet::add);
 		}

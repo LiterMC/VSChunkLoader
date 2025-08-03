@@ -32,7 +32,7 @@ public final class ChunkLoaderManager extends SavedData {
 		final ChunkLoaderManager manager = new ChunkLoaderManager(level);
 		for (final long posLong : data.getLongArray(POSITIONS_KEY)) {
 			final BlockPos pos = BlockPos.of(posLong);
-			manager.chunkLoaders.put(pos, ChunkLoaderPlayerHolder.createForBlock(level, pos));
+			manager.chunkLoaders.put(pos, manager.createChunkLoaderHolder(pos));
 		}
 		return manager;
 	}
@@ -47,26 +47,39 @@ public final class ChunkLoaderManager extends SavedData {
 	}
 
 	public void refreshChunkLoader(final BlockPos pos) {
-		final ChunkLoaderPlayerHolder holder = this.chunkLoaders.compute(pos, (p, holde) -> {
-			if (holde == null || holde.isDiscarding()) {
-				this.setDirty();
-				holde = ChunkLoaderPlayerHolder.createForBlock(this.level, p);
+		final ChunkLoaderPlayerHolder holder = this.chunkLoaders.compute(pos, (p, oldHolder) -> {
+			final boolean noOld = oldHolder == null;
+			if (noOld || oldHolder.isDiscarding()) {
+				if (noOld) {
+					this.setDirty();
+				} else {
+					oldHolder.setDiscardCallback(null);
+				}
+				oldHolder = this.createChunkLoaderHolder(p);
 			}
-			return holde;
+			return oldHolder;
 		});
 		holder.refresh();
 	}
 
 	public void deactivateChunkLoader(final BlockPos pos) {
-		final ChunkLoaderPlayerHolder holder = this.chunkLoaders.remove(pos);
+		final ChunkLoaderPlayerHolder holder = this.chunkLoaders.get(pos);
 		if (holder != null) {
 			holder.discard();
-			this.setDirty();
 		}
 	}
 
-	public Stream<ChunkLoaderPlayerHolder> streamActiveChunkLoaders() {
-		return this.chunkLoaders.values().stream()
-			.filter(Predicate.not(ChunkLoaderPlayerHolder::isDiscarding));
+	private ChunkLoaderPlayerHolder createChunkLoaderHolder(final BlockPos pos) {
+		final ChunkLoaderPlayerHolder holder = ChunkLoaderPlayerHolder.createForBlock(this.level, pos);
+		holder.setDiscardCallback(() -> {
+			if (this.chunkLoaders.remove(pos, holder)) {
+				this.setDirty();
+			}
+		});
+		return holder;
+	}
+
+	public Stream<ChunkLoaderPlayerHolder> streamChunkLoaders() {
+		return this.chunkLoaders.values().stream();
 	}
 }

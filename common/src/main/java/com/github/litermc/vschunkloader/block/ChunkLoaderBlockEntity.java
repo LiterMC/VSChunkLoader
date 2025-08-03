@@ -1,6 +1,7 @@
 package com.github.litermc.vschunkloader.block;
 
 import com.github.litermc.vschunkloader.VSCRegistry;
+import com.github.litermc.vschunkloader.config.Config;
 import com.github.litermc.vschunkloader.util.ChunkLoaderManager;
 
 import net.minecraft.core.BlockPos;
@@ -49,7 +50,7 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 	 * @return energy usage in FE/s
 	 */
 	public int getEnergyConsumeRate() {
-		return 4096 * 20;
+		return Config.chunkLoaderEnergyConsumeRate;
 	}
 
 	public int getMaxEnergyStored() {
@@ -82,6 +83,8 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 				this.activating += 20;
 				this.energyStored = newEnergy;
 				this.setChanged();
+				this.wasActivated = true;
+				this.onRefresh();
 			}
 		}
 		if (!this.isRunning()) {
@@ -94,7 +97,10 @@ public class ChunkLoaderBlockEntity extends BlockEntity {
 		}
 		this.activating--;
 		this.setChanged();
-		this.wasActivated = true;
+	}
+
+	public void onRefresh() {
+		final ServerLevel level = (ServerLevel)(this.getLevel());
 		ChunkLoaderManager.get(level).refreshChunkLoader(this.getBlockPos());
 	}
 

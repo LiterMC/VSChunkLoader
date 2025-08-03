@@ -48,6 +48,10 @@ public final class ChunkLoaderPlayerHolder {
 		return this.playerData;
 	}
 
+	public void setDiscardCallback(final Runnable callback) {
+		this.fakePlayer.setDiscardCallback(callback);
+	}
+
 	public void refresh() {
 		this.fakePlayer.refreshCountDown();
 	}

@@ -1,6 +1,7 @@
 package com.github.litermc.vschunkloader.block;
 
 import com.github.litermc.vschunkloader.VSCRegistry;
+import com.github.litermc.vschunkloader.config.Config;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -9,30 +10,40 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class ChunkLoaderWeakBlockEntity extends ChunkLoaderBlockEntity {
-	private int tickUsed = 0;
+	private int secondsUsed = 0;
 
 	public ChunkLoaderWeakBlockEntity(final BlockPos pos, final BlockState state) {
 		super(VSCRegistry.BlockEntities.CHUNK_LOADER_WEAK.get(), pos, state);
 	}
 
+	@Override
 	public boolean isRunning() {
-		return super.isRunning() && this.tickUsed < this.getMaxUseTime();
+		return super.isRunning() && !this.isOutOfTime();
 	}
 
-	public int getMaxUseTime() {
-		return 20 * 60; // 1 min
+	@Override
+	public int getEnergyConsumeRate() {
+		return Config.weakChunkLoaderEnergyConsumeRate;
+	}
+
+	public boolean isOutOfTime() {
+		return this.secondsUsed >= this.getMaxActiveSeconds();
+	}
+
+	public int getMaxActiveSeconds() {
+		return Config.weakChunkLoaderMaxActivateSeconds;
 	}
 
 	@Override
 	public void load(final CompoundTag data) {
 		super.load(data);
-		this.tickUsed = data.getInt("TickUsed");
+		this.secondsUsed = data.getInt("SecondsUsed");
 	}
 
 	@Override
 	protected void saveAdditional(final CompoundTag data) {
 		super.saveAdditional(data);
-		data.putInt("TickUsed", this.tickUsed);
+		data.putInt("SecondsUsed", this.secondsUsed);
 	}
 
 	@Override
@@ -41,13 +52,17 @@ public class ChunkLoaderWeakBlockEntity extends ChunkLoaderBlockEntity {
 		if (this.isRemoved()) {
 			return;
 		}
-		if (this.tickUsed >= this.getMaxUseTime()) {
+		if (this.isOutOfTime()) {
 			this.getLevel().destroyBlock(this.getBlockPos(), false);
 			this.setRemoved();
-			return;
 		}
-		if (this.isRunning()) {
-			this.tickUsed++;
+	}
+
+	@Override
+	public void onRefresh() {
+		super.onRefresh();
+		if (!this.isOutOfTime()) {
+			this.secondsUsed++;
 			this.setChanged();
 		}
 	}

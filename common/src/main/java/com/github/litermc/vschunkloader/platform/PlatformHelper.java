@@ -8,6 +8,7 @@ import com.github.litermc.vschunkloader.network.MessageType;
 import com.github.litermc.vschunkloader.network.NetworkMessage;
 import com.github.litermc.vschunkloader.network.client.ClientNetworkContext;
 import com.github.litermc.vschunkloader.network.container.ContainerData;
+import com.github.litermc.vschunkloader.config.ConfigFile;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
@@ -53,6 +54,13 @@ public interface PlatformHelper {
 	 * @return If we're running in a development environment.
 	 */
 	boolean isDevelopmentEnvironment();
+
+	/**
+	 * Create a new config builder.
+	 *
+	 * @return The newly created config builder.
+	 */
+	ConfigFile.Builder createConfigBuilder();
 
 	MinecraftServer getCurrentServer();
 

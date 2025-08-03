@@ -28,6 +28,9 @@ dependencies {
 	implementation "com.google.auto.service:auto-service:1.1.1"
 	annotationProcessor "com.google.auto.service:auto-service:1.1.1"
 
+	include implementation("com.electronwill.night-config:core:3.8.1")
+	include implementation("com.electronwill.night-config:toml:3.8.1")
+
 	modRuntimeOnly "com.terraformersmc:modmenu:3.2.3"
 	modRuntimeOnly "me.shedaniel.cloth:cloth-config:${cloth_config_version}"
 
