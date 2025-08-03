@@ -41,7 +41,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Gradle Check
-        run: ./gradlew check
+        run: gradle check --no-daemon
 
   build:
     name: Build
@@ -58,7 +58,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Gradle Build
-        run: ./gradlew build
+        run: gradle build --no-daemon
       - name: Upload Build Artifacts
         id: artifact
         uses: actions/upload-artifact@v4
