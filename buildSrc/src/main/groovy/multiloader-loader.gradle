@@ -27,7 +27,7 @@ processResources {
 	from(configurations.commonResources)
 }
 
-tasks.named('remapJar') {
+tasks.named('build') {
 	finalizedBy('outputRemapJar')
 }
 
