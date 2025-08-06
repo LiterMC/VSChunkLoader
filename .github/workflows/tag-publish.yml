@@ -1,4 +1,4 @@
-name: Build And Test
+name: Tag Publish
 
 on:
   push:
@@ -41,7 +41,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Gradle Check
-        run: gradle check --no-daemon
+        run: ./gradlew check --no-daemon
 
   build:
     name: Build
@@ -58,8 +58,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Gradle Build
-        # must include clean task otherwise it may output empty Jar
-        run: gradle clean build --no-daemon
+        run: ./gradlew build --no-daemon
       - name: Upload Build Artifacts
         id: artifact
         uses: actions/upload-artifact@v4
