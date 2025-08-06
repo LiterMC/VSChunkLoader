@@ -58,7 +58,8 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Gradle Build
-        run: gradle build --no-daemon
+        # must include clean task otherwise it may output empty Jar
+        run: gradle clean build --no-daemon
       - name: Upload Build Artifacts
         id: artifact
         uses: actions/upload-artifact@v4
