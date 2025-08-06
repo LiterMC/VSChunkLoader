@@ -1,24 +1,62 @@
 package com.github.litermc.vschunkloader;
 
 import com.github.litermc.vschunkloader.block.BlockCapabilityProviders;
+import com.github.litermc.vschunkloader.command.VSCCommands;
 import com.github.litermc.vschunkloader.config.ConfigSpec;
 import com.github.litermc.vschunkloader.platform.ForgeConfigFile;
 
 import com.electronwill.nightconfig.core.file.FileConfig;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.level.LevelEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(Constants.MOD_ID)
-@Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber
 public class VSChunkLoaderMod {
 	public VSChunkLoaderMod() {
+		final FMLJavaModLoadingContext context = FMLJavaModLoadingContext.get();
+		final IEventBus modBus = context.getModEventBus();
+
 		VSCRegistry.register();
 		BlockCapabilityProviders.register();
 
-		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ((ForgeConfigFile)(ConfigSpec.serverSpec)).spec());
+		context.registerConfig(ModConfig.Type.SERVER, ((ForgeConfigFile)(ConfigSpec.serverSpec)).spec());
+		modBus.addListener(this::onConfigLoad);
+		modBus.addListener(this::onConfigReload);
+	}
+
+	@SubscribeEvent
+	public static void onLevelLoad(final LevelEvent.Load event) {
+		if (event.getLevel() instanceof ServerLevel level) {
+			VSCListeners.onServerLevelLoad(level);
+		}
+	}
+
+	@SubscribeEvent
+	public static void onLevelUnload(final LevelEvent.Unload event) {
+		if (event.getLevel() instanceof ServerLevel level) {
+			VSCListeners.onServerLevelUnload(level);
+		}
+	}
+
+	@SubscribeEvent
+	public static void onServerTick(final TickEvent.ServerTickEvent event) {
+		switch (event.phase) {
+		case START -> VSCListeners.preServerTick(event.getServer());
+		}
+	}
+
+	@SubscribeEvent
+	public static void onRegisterCommands(final RegisterCommandsEvent event) {
+		VSCCommands.register(event.getDispatcher());
 	}
 
 	// Following code comes from CC: Tweaked
@@ -27,17 +65,15 @@ public class VSChunkLoaderMod {
 	//
 	// SPDX-License-Identifier: MPL-2.0
 
-	@SubscribeEvent
-	public static void sync(final ModConfigEvent.Loading event) {
-		syncConfig(event.getConfig());
+	private void onConfigLoad(final ModConfigEvent.Loading event) {
+		this.syncConfig(event.getConfig());
 	}
 
-	@SubscribeEvent
-	public static void sync(final ModConfigEvent.Reloading event) {
-		syncConfig(event.getConfig());
+	private void onConfigReload(final ModConfigEvent.Reloading event) {
+		this.syncConfig(event.getConfig());
 	}
 
-	private static void syncConfig(final ModConfig config) {
+	private void syncConfig(final ModConfig config) {
 		if (!config.getModId().equals(Constants.MOD_ID)) return;
 
 		var path = config.getConfigData() instanceof FileConfig fileConfig ? fileConfig.getNioPath() : null;

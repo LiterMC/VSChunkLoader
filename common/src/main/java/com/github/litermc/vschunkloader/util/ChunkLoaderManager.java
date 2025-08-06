@@ -7,6 +7,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.phys.Vec3;
+
+import org.joml.Vector3dc;
+import org.joml.primitives.AABBic;
+import org.valkyrienskies.core.api.ships.ServerShip;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +24,7 @@ public final class ChunkLoaderManager extends SavedData {
 
 	private final ServerLevel level;
 	private final Map<BlockPos, ChunkLoaderPlayerHolder> chunkLoaders = new HashMap<>();
+	private final Map<Long, ChunkLoaderPlayerHolder> forcedShips = new HashMap<>();
 
 	private ChunkLoaderManager(final ServerLevel level) {
 		this.level = level;
@@ -69,6 +75,28 @@ public final class ChunkLoaderManager extends SavedData {
 		}
 	}
 
+	public void refreshForcedShip(final ServerShip ship) {
+		final AABBic box = ship.getShipAABB();
+		if (box == null) {
+			return;
+		}
+
+		final Vec3 position = new Vec3((box.maxX() + box.minX()) / 2, (box.maxY() + box.minY()) / 2, (box.maxZ() + box.minZ()) / 2);
+		final ChunkLoaderPlayerHolder holder = this.forcedShips.compute(ship.getId(), (id, oldHolder) -> {
+			if (oldHolder != null) {
+				if (!oldHolder.isDiscarding()) {
+					oldHolder.setPosition(position);
+					return oldHolder;
+				}
+				oldHolder.setDiscardCallback(null);
+			}
+			final ChunkLoaderPlayerHolder newHolder = ChunkLoaderPlayerHolder.createForShip(this.level, id, position);
+			newHolder.setDiscardCallback(() -> this.forcedShips.remove(id, newHolder));
+			return newHolder;
+		});
+		holder.refresh();
+	}
+
 	private ChunkLoaderPlayerHolder createChunkLoaderHolder(final BlockPos pos) {
 		final ChunkLoaderPlayerHolder holder = ChunkLoaderPlayerHolder.createForBlock(this.level, pos);
 		holder.setDiscardCallback(() -> {
@@ -80,6 +108,9 @@ public final class ChunkLoaderManager extends SavedData {
 	}
 
 	public Stream<ChunkLoaderPlayerHolder> streamChunkLoaders() {
-		return this.chunkLoaders.values().stream();
+		return Stream.concat(
+			this.chunkLoaders.values().stream(),
+			this.forcedShips.values().stream()
+		);
 	}
 }

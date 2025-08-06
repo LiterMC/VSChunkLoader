@@ -3,9 +3,8 @@ package com.github.litermc.vschunkloader.mixin;
 import com.github.litermc.vschunkloader.platform.PlatformHelper;
 import com.github.litermc.vschunkloader.util.ChunkLoaderManager;
 import com.github.litermc.vschunkloader.util.ChunkLoaderPlayerHolder;
+import com.github.litermc.vschunkloader.util.Utils;
 
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -45,15 +44,7 @@ public abstract class MixinShipObjectServerWorld {
 		if (dimId == null) {
 			return;
 		}
-		final String[] parts = dimId.split(":");
-		if (parts.length != 4) {
-			return;
-		}
-		final ResourceKey<Level> levelId = ResourceKey.create(
-			ResourceKey.createRegistryKey(new ResourceLocation(parts[0], parts[1])),
-			new ResourceLocation(parts[2], parts[3])
-		);
-		final ServerLevel level = PlatformHelper.get().getCurrentServer().getLevel(levelId);
+		final ServerLevel level = Utils.getLevel(dimId);
 		if (level == null) {
 			return;
 		}

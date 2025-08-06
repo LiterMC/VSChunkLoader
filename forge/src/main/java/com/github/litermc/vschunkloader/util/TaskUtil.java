@@ -11,7 +11,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 public final class TaskUtil {
 	private static final Queue<Task> TICK_START_QUEUE = new PriorityBlockingQueue<>();
 	private static final Queue<Task> TICK_END_QUEUE = new PriorityBlockingQueue<>();
-	private static long tick = 0;
+	private static volatile long tick = 0;
 
 	private TaskUtil() {}
 
@@ -24,9 +24,10 @@ public final class TaskUtil {
 			}
 			case END -> TICK_END_QUEUE;
 		};
+		final long t = tick;
 		for (int i = queue.size(); i > 0; i--) {
 			final Task task = queue.element();
-			if (task.tick() > tick) {
+			if (task.tick() > t) {
 				return;
 			}
 			queue.remove();

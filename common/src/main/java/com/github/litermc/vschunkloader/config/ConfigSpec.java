@@ -7,6 +7,8 @@ import java.nio.file.Path;
 public final class ConfigSpec {
 	public static final ConfigFile serverSpec;
 
+	public static final ConfigFile.Value<Boolean> FORCE_LOAD_ALL_SHIPS;
+
 	public static final ConfigFile.Value<Integer> CHUNK_LOADER_ENERGY_CONSUME_RATE;
 	public static final ConfigFile.Value<Integer> WEAK_CHUNK_LOADER_ENERGY_CONSUME_RATE;
 	public static final ConfigFile.Value<Integer> WEAK_CHUNK_LOADER_MAX_ACTIVATE_SECONDS;
@@ -15,6 +17,17 @@ public final class ConfigSpec {
 
 	static {
 		final ConfigFile.Builder builder = PlatformHelper.get().createConfigBuilder();
+		{
+			builder
+				.comment("General settings")
+				.push("general");
+
+			FORCE_LOAD_ALL_SHIPS = builder
+				.comment("Should force load all ships on the server")
+				.define("force_load_all_ships", Config.forceLoadAllShips);
+
+			builder.pop();
+		}
 		{
 			builder
 				.comment("Chunk loader consumptions")
@@ -37,6 +50,7 @@ public final class ConfigSpec {
 	}
 
 	public static void syncServer(Path path) {
+		Config.forceLoadAllShips = FORCE_LOAD_ALL_SHIPS.get();
 		Config.chunkLoaderEnergyConsumeRate = CHUNK_LOADER_ENERGY_CONSUME_RATE.get();
 		Config.weakChunkLoaderEnergyConsumeRate = WEAK_CHUNK_LOADER_ENERGY_CONSUME_RATE.get();
 		Config.weakChunkLoaderMaxActivateSeconds = WEAK_CHUNK_LOADER_MAX_ACTIVATE_SECONDS.get();

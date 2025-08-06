@@ -16,8 +16,8 @@ import java.nio.charset.StandardCharsets;
 
 public final class ChunkLoaderPlayerHolder {
 	private final ServerLevel level;
-	private final Vec3 position;
 	private final GameProfile fakeGameProfile;
+	private Vec3 position;
 	private IChunkLoaderFakePlayer fakePlayer;
 	private IPlayer playerData;
 
@@ -31,16 +31,22 @@ public final class ChunkLoaderPlayerHolder {
 		this.playerData = new MinecraftPlayer(fakePlayer);
 
 		this.fakePlayer.bindPosition(this.position);
+		fakePlayer.moveTo(this.position);
 		this.level.addNewPlayer(fakePlayer);
 	}
 
 	public static ChunkLoaderPlayerHolder createForBlock(final ServerLevel level, final BlockPos blockPos) {
-		final String name = "ChunkLoader:" + level.dimension().location().toString() + "#" + blockPos.asLong();
+		final String name = "ChunkLoader:" + level.dimension().location().toString() + "#" + blockPos.toString();
 		return new ChunkLoaderPlayerHolder(level, blockPos.getCenter(), name);
 	}
 
 	public static ChunkLoaderPlayerHolder createFixed(final ServerLevel level, final Vec3 position) {
 		final String name = "ChunkLoaderFixed:" + level.dimension().location().toString() + "#" + position.toString();
+		return new ChunkLoaderPlayerHolder(level, position, name);
+	}
+
+	public static ChunkLoaderPlayerHolder createForShip(final ServerLevel level, final long shipId, final Vec3 position) {
+		final String name = "ChunkLoaderShip:" + level.dimension().location().toString() + "#" + shipId;
 		return new ChunkLoaderPlayerHolder(level, position, name);
 	}
 
@@ -50,6 +56,11 @@ public final class ChunkLoaderPlayerHolder {
 
 	public void setDiscardCallback(final Runnable callback) {
 		this.fakePlayer.setDiscardCallback(callback);
+	}
+
+	public void setPosition(final Vec3 position) {
+		this.position = position;
+		this.fakePlayer.bindPosition(position);
 	}
 
 	public void refresh() {

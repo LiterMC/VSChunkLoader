@@ -113,7 +113,6 @@ public final class FakePlayer extends net.fabricmc.fabric.api.entity.FakePlayer 
 	@Override
 	public void bindPosition(final Vec3 position) {
 		this.position = position;
-		this.moveTo(position);
 	}
 
 	@Override
