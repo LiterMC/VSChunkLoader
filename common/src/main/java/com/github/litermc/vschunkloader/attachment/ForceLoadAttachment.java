@@ -1,8 +1,14 @@
 package com.github.litermc.vschunkloader.attachment;
 
+import  com.github.litermc.vschunkloader.util.ResourceLocationCollectionSerializer;
+
+import net.minecraft.resources.ResourceLocation;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.valkyrienskies.core.api.ships.ServerShip;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +18,8 @@ import java.util.Set;
 	isGetterVisibility = JsonAutoDetect.Visibility.NONE
 )
 public final class ForceLoadAttachment {
-	private Set<String> forceLoadTokens = new HashSet<>();
+	@JsonSerialize(using = ResourceLocationCollectionSerializer.class)
+	private Set<ResourceLocation> forceLoadTokens = new HashSet<>();
 
 	public ForceLoadAttachment() {}
 
@@ -29,19 +36,23 @@ public final class ForceLoadAttachment {
 		return !this.forceLoadTokens.isEmpty();
 	}
 
-	public boolean isForceLoadedBy(final String token) {
+	public boolean isForceLoadedBy(final ResourceLocation token) {
 		return this.forceLoadTokens.contains(token);
 	}
 
-	public void addForceLoad(final String token) {
+	public void addForceLoad(final ResourceLocation token) {
 		this.forceLoadTokens.add(token);
 	}
 
-	public void removeForceLoad(final String token) {
+	public void removeForceLoad(final ResourceLocation token) {
 		this.forceLoadTokens.remove(token);
 	}
 
 	public void removeAllForceLoadTokens() {
 		this.forceLoadTokens.clear();
+	}
+
+	public Set<ResourceLocation> getAllForceLoadTokens() {
+		return Collections.unmodifiableSet(this.forceLoadTokens);
 	}
 }

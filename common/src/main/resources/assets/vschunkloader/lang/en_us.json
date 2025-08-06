@@ -1,9 +1,11 @@
 {
 	"block.vschunkloader.chunk_loader": "Chunk Loader",
 	"block.vschunkloader.chunk_loader_weak": "Weak Chunk Loader",
-	"command.vschunkloader.forceload.load": "Successfully force loaded %d ships",
-	"command.vschunkloader.forceload.unload": "Successfully released force load on %d ships",
+	"command.vschunkloader.forceload": "Successfully force loaded %d ships",
+	"command.vschunkloader.unforceload": "Successfully released force load on %d ships",
 	"command.vschunkloader.is_forceloaded": "There are %d ships force loading",
 	"command.vschunkloader.is_forceloaded.none": "No ship is force loaded",
+	"command.vschunkloader.query_forceload.none": "The ship is not force loaded",
+	"command.vschunkloader.query_forceload.title": "The ship has %d force load tokens:",
 	"itemGroup.vschunkloader": "VS Chunk Loader"
 }
