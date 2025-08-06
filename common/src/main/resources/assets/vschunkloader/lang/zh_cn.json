@@ -1,5 +1,11 @@
 {
 	"block.vschunkloader.chunk_loader": "区块加载器",
 	"block.vschunkloader.chunk_loader_weak": "脆弱的区块加载器",
+	"command.vschunkloader.forceload": "成功强制加载 %d 个物理结构",
+	"command.vschunkloader.is_forceloaded": "正在强制加载 %d 个物理结构",
+	"command.vschunkloader.is_forceloaded.none": "没有正在强制加载的物理结构",
+	"command.vschunkloader.query_forceload.none": "此物理结构未被强制加载",
+	"command.vschunkloader.query_forceload.title": "此物理结构有 %d 个强制加载令牌:",
+	"command.vschunkloader.unforceload": "成功取消强制加载 %d 个物理结构",
 	"itemGroup.vschunkloader": "VS 区块加载器"
 }
