@@ -1,0 +1,6 @@
+{
+	"parent": "vschunkloader:block/ammo_assembler",
+	"textures": {
+		"side": "vschunkloader:block/ammo_assembler_side_green"
+	}
+}

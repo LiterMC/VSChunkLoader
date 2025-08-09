@@ -1,0 +1,9 @@
+{
+	"parent": "minecraft:block/cube_bottom_top",
+	"textures": {
+		"bottom": "vschunkloader:block/ammo_assembler_bottom",
+		"particle": "vschunkloader:block/ammo_assembler_side",
+		"side": "vschunkloader:block/ammo_assembler_side",
+		"top": "vschunkloader:block/ammo_assembler_top"
+	}
+}
