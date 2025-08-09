@@ -41,7 +41,7 @@ public abstract class MixinShipObjectServerWorld {
 	@Inject(method = "teleportShip", at = @At("HEAD"), remap = false)
 	public void teleportShip(final ServerShip ship, final ShipTeleportData teleportData, final CallbackInfo ci) {
 		final String dimId = teleportData.getNewDimension();
-		if (dimId == null) {
+		if (dimId == null || dimId.equals(ship.getChunkClaimDimension())) {
 			return;
 		}
 		final ServerLevel level = Utils.getLevel(dimId);

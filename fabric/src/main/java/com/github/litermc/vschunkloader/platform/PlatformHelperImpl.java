@@ -113,6 +113,11 @@ public final class PlatformHelperImpl implements PlatformHelper {
 		throw new UnsupportedOperationException("TODO");
 	}
 
+	@Override
+	public void queueEndTask(int delay, Runnable task) {
+		throw new UnsupportedOperationException("TODO");
+	}
+
 	@SuppressWarnings("unchecked")
 	private static <T> Registry<T> getRegistry(ResourceKey<Registry<T>> id) {
 		var registry = (Registry<T>) BuiltInRegistries.REGISTRY.get(id.location());

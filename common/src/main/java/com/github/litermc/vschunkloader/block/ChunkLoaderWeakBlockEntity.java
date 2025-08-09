@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class ChunkLoaderWeakBlockEntity extends ChunkLoaderBlockEntity {
+public final class ChunkLoaderWeakBlockEntity extends ChunkLoaderBlockEntity {
 	private int secondsUsed = 0;
 
 	public ChunkLoaderWeakBlockEntity(final BlockPos pos, final BlockState state) {

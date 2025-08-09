@@ -1,5 +1,6 @@
 package com.github.litermc.vschunkloader.util;
 
+import com.github.litermc.vschunkloader.Constants;
 import com.github.litermc.vschunkloader.platform.PlatformHelper;
 
 import com.mojang.authlib.GameProfile;
@@ -15,6 +16,7 @@ import java.util.UUID;
 import java.nio.charset.StandardCharsets;
 
 public final class ChunkLoaderPlayerHolder {
+	private static int count = 0;
 	private final ServerLevel level;
 	private final GameProfile fakeGameProfile;
 	private Vec3 position;
@@ -36,16 +38,20 @@ public final class ChunkLoaderPlayerHolder {
 	}
 
 	public static ChunkLoaderPlayerHolder createForBlock(final ServerLevel level, final BlockPos blockPos) {
+		Constants.LOG.debug("ChunkLoaderPlayerHolder: creating at block: {}", blockPos);
 		final String name = "ChunkLoader:" + level.dimension().location().toString() + "#" + blockPos.toString();
 		return new ChunkLoaderPlayerHolder(level, blockPos.getCenter(), name);
 	}
 
 	public static ChunkLoaderPlayerHolder createFixed(final ServerLevel level, final Vec3 position) {
-		final String name = "ChunkLoaderFixed:" + level.dimension().location().toString() + "#" + position.toString();
+		Constants.LOG.debug("ChunkLoaderPlayerHolder: creating fixed: {}", position);
+		final int id = count++;
+		final String name = "ChunkLoaderFixed:" + level.dimension().location().toString() + "#" + Integer.toString(id, 16);
 		return new ChunkLoaderPlayerHolder(level, position, name);
 	}
 
 	public static ChunkLoaderPlayerHolder createForShip(final ServerLevel level, final long shipId, final Vec3 position) {
+		Constants.LOG.debug("ChunkLoaderPlayerHolder: creating for ship: {} @ {}", shipId, position);
 		final String name = "ChunkLoaderShip:" + level.dimension().location().toString() + "#" + shipId;
 		return new ChunkLoaderPlayerHolder(level, position, name);
 	}

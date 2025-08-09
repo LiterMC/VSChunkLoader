@@ -32,6 +32,17 @@ public final class ForceLoadAttachment {
 		return attachment;
 	}
 
+	@JsonGetter("forceLoadTokens")
+	private Collection<String> getForceLoadTokens() {
+		return this.forceLoadTokens.stream().map(ResourceLocation::toString).toList();
+	}
+
+	@JsonSetter("forceLoadTokens")
+	private void setForceLoadTokens(final Collection<String> tokens) {
+		this.forceLoadTokens.clear();
+		tokens.stream().map(ResourceLocation::new).forEach(this.forceLoadTokens::add);
+	}
+
 	public boolean isForceLoaded() {
 		return !this.forceLoadTokens.isEmpty();
 	}
@@ -54,16 +65,5 @@ public final class ForceLoadAttachment {
 
 	public Set<ResourceLocation> getAllForceLoadTokens() {
 		return Collections.unmodifiableSet(this.forceLoadTokens);
-	}
-
-	@JsonGetter("forceLoadTokens")
-	private Collection<String> getForceLoadTokens() {
-		return this.forceLoadTokens.stream().map(ResourceLocation::toString).toList();
-	}
-
-	@JsonSetter("forceLoadTokens")
-	private void setForceLoadTokens(final Collection<String> tokens) {
-		this.forceLoadTokens.clear();
-		tokens.stream().map(ResourceLocation::new).forEach(this.forceLoadTokens::add);
 	}
 }

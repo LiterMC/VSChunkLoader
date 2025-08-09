@@ -1,6 +1,7 @@
 package com.github.litermc.vschunkloader;
 
 import com.github.litermc.vschunkloader.attachment.ForceLoadAttachment;
+import com.github.litermc.vschunkloader.config.Config;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -14,6 +15,11 @@ import java.util.Set;
 
 public final class VSCApi {
 	private static final VSCApi INSTANCE = new VSCApi();
+	/**
+	 * Reusable ship slug prefix.
+	 * Ship will not be force loaded with this prefix when {@link Config.forceLoadAllShips} is {@code true}.
+	 */
+	public static final String REUSABLE_SHIP_SLUG_PREFIX = "+reuse+";
 
 	private VSCApi() {}
 

@@ -1,4 +1,4 @@
-package com.github.litermc.vschunkloader.block;
+package com.github.litermc.vschunkloader.block.ammo;
 
 import com.github.litermc.vschunkloader.VSCRegistry;
 
@@ -12,21 +12,21 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class ChunkLoaderWeakBlock extends Block implements EntityBlock {
-	public ChunkLoaderWeakBlock(final BlockBehaviour.Properties props) {
+public final class AmmoManagerBlock extends Block implements EntityBlock {
+	public AmmoManagerBlock(final BlockBehaviour.Properties props) {
 		super(props);
 	}
 
 	@Override
-	public ChunkLoaderWeakBlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
-		return new ChunkLoaderWeakBlockEntity(pos, state);
+	public AmmoManagerBlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
+		return new AmmoManagerBlockEntity(pos, state);
 	}
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level, final BlockState state, final BlockEntityType<T> type) {
-		if (type != VSCRegistry.BlockEntities.CHUNK_LOADER_WEAK.get()) {
+		if (type != VSCRegistry.BlockEntities.AMMO_MANAGER.get()) {
 			return null;
 		}
-		return level.isClientSide ? null : (level2, pos, state2, entity) -> ((ChunkLoaderWeakBlockEntity) (entity)).serverTick();
+		return level.isClientSide ? null : (level2, pos, state2, entity) -> ((AmmoManagerBlockEntity) (entity)).serverTick();
 	}
 }
