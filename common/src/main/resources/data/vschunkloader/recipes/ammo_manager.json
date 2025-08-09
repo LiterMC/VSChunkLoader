@@ -1,0 +1,32 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"CEC",
+		"LOL",
+		"GAG"
+	],
+	"key": {
+		"A": {
+			"item": "minecraft:anvil"
+		},
+		"C": {
+			"item": "minecraft:copper_ingot"
+		},
+		"E": {
+			"item": "minecraft:ender_eye"
+		},
+		"G": {
+			"item": "minecraft:gold_ingot"
+		},
+		"L": {
+			"item": "minecraft:lodestone"
+		},
+		"O": {
+			"item": "minecraft:compass"
+		}
+	},
+	"result": {
+		"item": "vschunkloader:ammo_manager",
+		"count": 1
+	}
+}

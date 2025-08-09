@@ -1,6 +1,8 @@
 {
 	"replace": false,
 	"values": [
+		"vschunkloader:ammo_assembler",
+		"vschunkloader:ammo_manager",
 		"vschunkloader:chunk_loader_weak"
 	]
 }

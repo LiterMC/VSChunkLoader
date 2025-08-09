@@ -2,12 +2,12 @@
 	"type": "minecraft:crafting_shaped",
 	"pattern": [
 		"ITI",
-		"EBO",
+		"EDO",
 		"IHI"
 	],
 	"key": {
-		"B": {
-			"item": "minecraft:lodestone"
+		"D": {
+			"item": "minecraft:ender_pearl"
 		},
 		"E": {
 			"item": "minecraft:emerald"

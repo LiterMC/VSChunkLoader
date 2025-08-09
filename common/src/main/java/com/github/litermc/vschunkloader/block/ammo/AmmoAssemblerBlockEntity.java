@@ -64,13 +64,15 @@ public class AmmoAssemblerBlockEntity extends BlockEntity {
 	private volatile AssembleResult assembleResult = AssembleResult.SUCCESS;
 	private String shipSlug = null;
 	private int energyStored = 0;
-	private int energyConsumption = 0; // TODO
+	private int energyConsumption = Config.ammoAssembleEnergy; // TODO
 	private final Queue<BlockPos> queueing = new ArrayDeque<>();
 	private final DenseBlockPosSet blocks = new DenseBlockPosSet();
 	private final DenseBlockPosSet checked = new DenseBlockPosSet();
 	private final AABBi box = new AABBi();
 
 	private Runnable assembleFinishCallback = null;
+	Object energyStorage = null;
+	Object peripheral = null;
 
 	public AmmoAssemblerBlockEntity(BlockPos pos, BlockState state) {
 		super(VSCRegistry.BlockEntities.AMMO_ASSEMBLER.get(), pos, state);
@@ -106,7 +108,7 @@ public class AmmoAssemblerBlockEntity extends BlockEntity {
 		if (avaliable <= 0) {
 			return 0;
 		}
-		final int received = Math.min(avaliable, maxReceive);
+		final int received = Math.min(Math.min(avaliable, maxReceive), (this.getMaxEnergyStored() + 99) / 100);
 		if (!simulate) {
 			this.energyStored += received;
 		}
@@ -124,6 +126,7 @@ public class AmmoAssemblerBlockEntity extends BlockEntity {
 	@Override
 	public void load(final CompoundTag data) {
 		this.energyStored = data.getInt("EnergyStored");
+		this.triggering = data.getBoolean("Powered");
 		try {
 			this.assembleResult = AssembleResult.valueOf(data.getString("AssembleResult"));
 		} catch (IllegalArgumentException e) {
@@ -134,6 +137,7 @@ public class AmmoAssemblerBlockEntity extends BlockEntity {
 	@Override
 	public void saveAdditional(final CompoundTag data) {
 		data.putInt("EnergyStored", this.energyStored);
+		data.putBoolean("Powered", this.triggering);
 		this.saveShared(data);
 	}
 

@@ -1,4 +1,6 @@
 {
+	"block.vschunkloader.ammo_assembler": "弹药组装器",
+	"block.vschunkloader.ammo_manager": "弹药管理器",
 	"block.vschunkloader.chunk_loader": "区块加载器",
 	"block.vschunkloader.chunk_loader_weak": "脆弱的区块加载器",
 	"command.vschunkloader.forceload": "成功强制加载 %d 个物理结构",

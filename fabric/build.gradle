@@ -34,12 +34,12 @@ dependencies {
 	modRuntimeOnly "com.terraformersmc:modmenu:3.2.3"
 	modRuntimeOnly "me.shedaniel.cloth:cloth-config:${cloth_config_version}"
 
-	modApi "org.valkyrienskies:valkyrienskies-120-fabric:${vs2_version}"
+	modCompileOnly "org.valkyrienskies:valkyrienskies-120-fabric:${vs2_version}"
 
 	modCompileOnly "maven.modrinth:jade:${jade_version}+fabric"
 	modRuntimeOnly "maven.modrinth:jade:${jade_version}+fabric"
 
-	compileOnly "cc.tweaked:cc-tweaked-${minecraft_version}-common:${cct_version}"
+	modCompileOnly "cc.tweaked:cc-tweaked-${minecraft_version}-fabric:${cct_version}"
 
 	modCompileOnly "com.simibubi.create:create-fabric-${minecraft_version}:${create_fabric_version}"
 	modRuntimeOnly "com.simibubi.create:create-fabric-${minecraft_version}:${create_fabric_version}"

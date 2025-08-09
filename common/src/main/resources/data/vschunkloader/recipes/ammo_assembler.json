@@ -1,0 +1,29 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"GMG",
+		"LSL",
+		"GPG"
+	],
+	"key": {
+		"G": {
+			"item": "minecraft:gold_ingot"
+		},
+		"L": {
+			"item": "minecraft:lodestone"
+		},
+		"M": {
+			"item": "minecraft:map"
+		},
+		"P": {
+			"item": "minecraft:piston"
+		},
+		"S": {
+			"item": "minecraft:slime_block"
+		}
+	},
+	"result": {
+		"item": "vschunkloader:ammo_assembler",
+		"count": 1
+	}
+}

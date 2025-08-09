@@ -1,4 +1,6 @@
 {
+	"block.vschunkloader.ammo_assembler": "Ammo Assembler",
+	"block.vschunkloader.ammo_manager": "Ammo Manager",
 	"block.vschunkloader.chunk_loader": "Chunk Loader",
 	"block.vschunkloader.chunk_loader_weak": "Weak Chunk Loader",
 	"command.vschunkloader.forceload": "Successfully force loaded %d ships",
