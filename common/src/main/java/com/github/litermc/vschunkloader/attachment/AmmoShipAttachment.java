@@ -38,7 +38,7 @@ public final class AmmoShipAttachment implements ServerTickListener {
 	private final ServerShipWorldCore world;
 	private long shipId;
 	private int activatedTick;
-	private int unmanagedTick = 0;
+	private boolean unmanaged = false;
 	private boolean deactivated = false;
 
 	public AmmoShipAttachment() {
@@ -94,7 +94,7 @@ public final class AmmoShipAttachment implements ServerTickListener {
 	}
 
 	public void managerTick() {
-		this.unmanagedTick = 0;
+		this.unmanaged = false;
 	}
 
 	private ServerShip getShip() {
@@ -106,11 +106,11 @@ public final class AmmoShipAttachment implements ServerTickListener {
 	}
 
 	private void checkActivate() {
-		if (this.unmanagedTick > 1) {
+		if (this.unmanaged) {
 			this.activate();
 			return;
 		}
-		this.unmanagedTick++;
+		this.unmanaged = true;
 	}
 
 	private void activate() {
