@@ -2,6 +2,8 @@ package com.github.litermc.vschunkloader.command;
 
 import com.github.litermc.vschunkloader.Constants;
 import com.github.litermc.vschunkloader.VSCApi;
+import com.github.litermc.vschunkloader.util.ShipAllocator;
+import com.github.litermc.vschunkloader.util.Utils;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -13,7 +15,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 
+import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.core.api.ships.Ship;
 import org.valkyrienskies.mod.common.command.ShipArgument;
 import org.valkyrienskies.mod.mixinducks.feature.command.VSCommandSource;
@@ -52,6 +56,11 @@ public final class VSCCommands {
 			.then(Commands.literal("query-forceload-tokens")
 				.then(Commands.argument("ships", ShipArgument.Companion.ships())
 					.executes(VSCCommands::queryForceLoadTokens)
+				)
+			)
+			.then(Commands.literal("delete")
+				.then(Commands.argument("ships", ShipArgument.Companion.ships())
+					.executes(VSCCommands::delete)
 				)
 			)
 		);
@@ -164,5 +173,29 @@ public final class VSCCommands {
 			return component;
 		}, false);
 		return count + 1;
+	}
+
+	private static int delete(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+		final CommandSourceStack source = context.getSource();
+		final MinecraftServer server = source.getServer();
+		final Set<Ship> ships = ShipArgument.Companion.getShips((CommandContext<VSCommandSource>)((CommandContext<?>)(context)), "ships");
+		int successCount = 0;
+		for (final Ship ship : ships) {
+			if (!(ship instanceof ServerShip serverShip)) {
+				continue;
+			}
+			final ServerLevel level = Utils.getLevel(serverShip.getChunkClaimDimension());
+			if (level == null) {
+				continue;
+			}
+			ShipAllocator.get(level).putShip(serverShip);
+			successCount++;
+		}
+		final int finalSuccessCount = successCount;
+		source.sendSuccess(() ->
+			Component.translatable("command.valkyrienskies.delete.success", finalSuccessCount),
+			true
+		);
+		return finalSuccessCount;
 	}
 }
