@@ -1,5 +1,7 @@
 package com.github.litermc.vschunkloader.attachment;
 
+import com.github.litermc.vschunkloader.platform.PlatformHelper;
+
 import net.minecraft.resources.ResourceLocation;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -44,7 +46,13 @@ public final class ForceLoadAttachment {
 	}
 
 	public boolean isForceLoaded() {
-		return !this.forceLoadTokens.isEmpty();
+		final PlatformHelper platform = PlatformHelper.get();
+		for (final ResourceLocation id : this.forceLoadTokens) {
+			if (platform.isModLoaded(id.getNamespace())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean isForceLoadedBy(final ResourceLocation token) {
