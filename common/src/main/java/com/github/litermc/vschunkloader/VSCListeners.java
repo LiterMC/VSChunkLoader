@@ -27,7 +27,7 @@ public final class VSCListeners {
 	public static void preServerTick(final MinecraftServer server) {
 		final ServerShipWorld shipWorld = VSGameUtilsKt.getShipObjectWorld(server);
 		for (final ServerShip ship : shipWorld.getAllShips()) {
-			if (!Config.forceLoadAllShips) {
+			if (Config.forceLoadAllShips) {
 				final String slug = ship.getSlug();
 				if (slug != null && slug.startsWith(VSCApi.REUSABLE_SHIP_SLUG_PREFIX)) {
 					continue;
