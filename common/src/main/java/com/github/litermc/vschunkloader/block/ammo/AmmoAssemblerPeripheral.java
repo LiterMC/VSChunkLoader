@@ -1,6 +1,6 @@
 package com.github.litermc.vschunkloader.block.ammo;
 
-import com.github.litermc.vschunkloader.platform.PlatformHelper;
+import com.github.litermc.vschunkloader.util.TaskUtil;
 
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.ILuaCallback;
@@ -68,7 +68,7 @@ public class AmmoAssemblerPeripheral implements IPeripheral {
 		if (!this.assembling.compareAndSet(false, true)) {
 			throw new LuaException("Already assembling");
 		}
-		PlatformHelper.get().queueEndTask(() -> {
+		TaskUtil.queueTickEnd(() -> {
 			if (!this.assembler.assemble(slugStr)) {
 				this.queueEvent(ASSEMBLE_FAILED_EVENT_ID, this.peripheralId, true, "Already assembling");
 			}

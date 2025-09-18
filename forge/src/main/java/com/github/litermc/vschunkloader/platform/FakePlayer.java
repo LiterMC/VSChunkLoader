@@ -153,7 +153,7 @@ public final class FakePlayer extends net.minecraftforge.common.util.FakePlayer 
 			this.startDiscard();
 			return;
 		}
-		Constants.LOG.debug("FakePlayer: ticking {} {} {}", this.countDown, this, this.position);
+		Constants.LOG.debug("FakePlayer: ticking cd={} {} {}", this.countDown, this, this.position);
 		this.setOldPosAndRot();
 		this.setPos(this.position);
 		this.countDown--;

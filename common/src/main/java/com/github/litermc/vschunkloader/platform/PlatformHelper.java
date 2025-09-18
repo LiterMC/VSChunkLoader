@@ -66,18 +66,6 @@ public interface PlatformHelper {
 
 	boolean isModLoaded(String modid);
 
-	default void queueTask(Runnable task) {
-		this.queueTask(0, task);
-	}
-
-	void queueTask(int delay, Runnable task);
-
-	default void queueEndTask(Runnable task) {
-		this.queueEndTask(0, task);
-	}
-
-	void queueEndTask(int delay, Runnable task);
-
 	/**
 	 * Wrap a Minecraft registry in our own abstraction layer.
 	 *

@@ -2,6 +2,7 @@ package com.github.litermc.vschunkloader;
 
 import com.github.litermc.vschunkloader.config.Config;
 import com.github.litermc.vschunkloader.util.ChunkLoaderManager;
+import com.github.litermc.vschunkloader.util.TaskUtil;
 import com.github.litermc.vschunkloader.util.Utils;
 
 import net.minecraft.core.BlockPos;
@@ -25,6 +26,7 @@ public final class VSCListeners {
 	}
 
 	public static void preServerTick(final MinecraftServer server) {
+		TaskUtil.preServerTick();
 		final ServerShipWorld shipWorld = VSGameUtilsKt.getShipObjectWorld(server);
 		for (final ServerShip ship : shipWorld.getAllShips()) {
 			if (Config.forceLoadAllShips) {
@@ -41,5 +43,9 @@ public final class VSCListeners {
 			}
 			ChunkLoaderManager.get(level).refreshForcedShip(ship);
 		}
+	}
+
+	public static void postServerTick(final MinecraftServer server) {
+		TaskUtil.postServerTick();
 	}
 }

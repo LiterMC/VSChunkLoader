@@ -5,6 +5,7 @@ import com.github.litermc.vschunkloader.VSCApi;
 import com.github.litermc.vschunkloader.config.Config;
 import com.github.litermc.vschunkloader.platform.PlatformHelper;
 import com.github.litermc.vschunkloader.util.ShipAllocator;
+import com.github.litermc.vschunkloader.util.TaskUtil;
 import com.github.litermc.vschunkloader.util.Utils;
 
 import net.minecraft.resources.ResourceLocation;
@@ -132,6 +133,6 @@ public final class AmmoShipAttachment implements ServerTickListener {
 			this.world.deleteShip(ship);
 			return;
 		}
-		PlatformHelper.get().queueTask(() -> ShipAllocator.get(level).putShip(ship));
+		TaskUtil.queueTickStart(() -> ShipAllocator.get(level).putShip(ship));
 	}
 }

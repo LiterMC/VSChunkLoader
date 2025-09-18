@@ -51,6 +51,7 @@ public class VSChunkLoaderMod {
 	public static void onServerTick(final TickEvent.ServerTickEvent event) {
 		switch (event.phase) {
 		case START -> VSCListeners.preServerTick(event.getServer());
+		case END -> VSCListeners.postServerTick(event.getServer());
 		}
 	}
 

@@ -40,5 +40,6 @@ public class VSChunkLoaderMod implements ModInitializer {
 		});
 
 		ServerTickEvents.START_SERVER_TICK.register(VSCListeners::preServerTick);
+		ServerTickEvents.END_SERVER_TICK.register(VSCListeners::postServerTick);
 	}
 }

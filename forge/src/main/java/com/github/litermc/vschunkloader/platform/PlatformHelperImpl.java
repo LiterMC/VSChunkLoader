@@ -107,16 +107,6 @@ public class PlatformHelperImpl implements PlatformHelper {
 	}
 
 	@Override
-	public void queueTask(int delay, Runnable task) {
-		TaskUtil.queueTickStart(delay, task);
-	}
-
-	@Override
-	public void queueEndTask(int delay, Runnable task) {
-		TaskUtil.queueTickStart(delay, task);
-	}
-
-	@Override
 	public <T> ResourceLocation getRegistryKey(ResourceKey<Registry<T>> registry, T object) {
 		var key = RegistryManager.ACTIVE.getRegistry(registry).getKey(object);
 		if (key == null) throw new IllegalArgumentException(object + " was not registered in " + registry);
