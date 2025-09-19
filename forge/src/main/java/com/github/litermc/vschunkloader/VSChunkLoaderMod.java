@@ -7,8 +7,10 @@ import com.github.litermc.vschunkloader.platform.ForgeConfigFile;
 
 import com.electronwill.nightconfig.core.file.FileConfig;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -34,15 +36,20 @@ public class VSChunkLoaderMod {
 	}
 
 	@SubscribeEvent
+	public static void onRegisterCommands(final RegisterCommandsEvent event) {
+		VSCCommands.register(event.getDispatcher());
+	}
+
+	@SubscribeEvent
 	public static void onLevelLoad(final LevelEvent.Load event) {
-		if (event.getLevel() instanceof ServerLevel level) {
+		if (event.getLevel() instanceof final ServerLevel level) {
 			VSCListeners.onServerLevelLoad(level);
 		}
 	}
 
 	@SubscribeEvent
 	public static void onLevelUnload(final LevelEvent.Unload event) {
-		if (event.getLevel() instanceof ServerLevel level) {
+		if (event.getLevel() instanceof final ServerLevel level) {
 			VSCListeners.onServerLevelUnload(level);
 		}
 	}
@@ -56,8 +63,17 @@ public class VSChunkLoaderMod {
 	}
 
 	@SubscribeEvent
-	public static void onRegisterCommands(final RegisterCommandsEvent event) {
-		VSCCommands.register(event.getDispatcher());
+	public static void onChunkLoad(final ChunkEvent.Load event) {
+		if (event.getLevel() instanceof final ServerLevel level && event.getChunk() instanceof final LevelChunk chunk) {
+			VSCListeners.onServerChunkLoad(level, chunk);
+		}
+	}
+
+	@SubscribeEvent
+	public static void onChunkUnload(final ChunkEvent.Unload event) {
+		if (event.getLevel() instanceof final ServerLevel level && event.getChunk() instanceof final LevelChunk chunk) {
+			VSCListeners.onServerChunkUnload(level, chunk);
+		}
 	}
 
 	// Following code comes from CC: Tweaked
@@ -77,7 +93,7 @@ public class VSChunkLoaderMod {
 	private void syncConfig(final ModConfig config) {
 		if (!config.getModId().equals(Constants.MOD_ID)) return;
 
-		var path = config.getConfigData() instanceof FileConfig fileConfig ? fileConfig.getNioPath() : null;
+		var path = config.getConfigData() instanceof final FileConfig fileConfig ? fileConfig.getNioPath() : null;
 
 		if (config.getType() == ModConfig.Type.SERVER && ((ForgeConfigFile)(ConfigSpec.serverSpec)).spec().isLoaded()) {
 			ConfigSpec.syncServer(path);

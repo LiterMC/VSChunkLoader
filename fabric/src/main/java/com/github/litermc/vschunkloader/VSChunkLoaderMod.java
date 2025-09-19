@@ -7,6 +7,7 @@ import com.github.litermc.vschunkloader.platform.FabricConfigFile;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
@@ -41,5 +42,7 @@ public class VSChunkLoaderMod implements ModInitializer {
 
 		ServerTickEvents.START_SERVER_TICK.register(VSCListeners::preServerTick);
 		ServerTickEvents.END_SERVER_TICK.register(VSCListeners::postServerTick);
+		ServerChunkEvents.CHUNK_LOAD.register(VSCListeners::onServerChunkLoad);
+		ServerChunkEvents.CHUNK_UNLOAD.register(VSCListeners::onServerChunkUnload);
 	}
 }

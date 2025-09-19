@@ -8,12 +8,13 @@ import net.minecraft.server.level.ServerLevel;
 
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class Utils {
 	private Utils() {}
 
-	private static final HashMap<String, ServerLevel> ID_TO_LEVEL_CACHE = new HashMap<>();
+	private static final Map<String, ServerLevel> ID_TO_LEVEL_CACHE = new ConcurrentHashMap<>();
 
 	public static void onServerLevelLoad(final ServerLevel level) {
 		ID_TO_LEVEL_CACHE.put(VSGameUtilsKt.getDimensionId(level), level);

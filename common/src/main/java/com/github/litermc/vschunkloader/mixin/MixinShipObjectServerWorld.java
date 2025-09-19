@@ -1,10 +1,11 @@
 package com.github.litermc.vschunkloader.mixin;
 
 import com.github.litermc.vschunkloader.platform.PlatformHelper;
+import com.github.litermc.vschunkloader.util.AdvancedBitSet;
 import com.github.litermc.vschunkloader.util.ChunkLoaderManager;
 import com.github.litermc.vschunkloader.util.ChunkLoaderPlayerHolder;
+import com.github.litermc.vschunkloader.util.ChunkSensor;
 import com.github.litermc.vschunkloader.util.ChunkWatchTasksImpl;
-import com.github.litermc.vschunkloader.util.Pair;
 import com.github.litermc.vschunkloader.util.TaskUtil;
 import com.github.litermc.vschunkloader.util.Utils;
 
@@ -29,11 +30,16 @@ import org.valkyrienskies.core.apigame.world.chunks.ChunkWatchTask;
 import org.valkyrienskies.core.apigame.world.chunks.ChunkWatchTasks;
 import org.valkyrienskies.core.impl.game.ships.ShipObjectServerWorld;
 import org.valkyrienskies.core.impl.networking.simple.SimplePackets;
+import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.networking.PacketRestartChunkUpdates;
 import org.valkyrienskies.mod.common.util.MinecraftPlayer;
 import org.valkyrienskies.mod.mixin.accessors.server.level.ChunkMapAccessor;
+import org.valkyrienskies.physics_api.voxel.updates.IVoxelShapeUpdate;
+import org.valkyrienskies.physics_api.voxel.updates.VoxelShapeUpdateType;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -54,12 +60,17 @@ import java.util.function.Predicate;
 
 @Mixin(ShipObjectServerWorld.class)
 public abstract class MixinShipObjectServerWorld implements ServerShipWorldCore {
+	@Shadow(remap = false)
+	@Final
+	private ArrayList<ShipObjectServerWorld.LevelVoxelUpdates> voxelShapeUpdatesList;
 	@Unique
 	private final Set<IPlayer> disconnectedPlayers = new HashSet<>();
 	@Unique
 	private final Map<Long, String> teleportedShips = new HashMap<>();
 	@Unique
 	private final SortedSet<ChunkUnwatchTask> pendingUnwatchTasks = new TreeSet<>((a, b) -> Long.compare(a.getChunkPos(), b.getChunkPos()));
+	@Unique
+	private final Map<ChunkPos, AdvancedBitSet> loadedChunks = new HashMap<>();
 
 	@ModifyVariable(method = "setPlayers", at = @At("HEAD"), remap = false)
 	public Set<? extends IPlayer> setPlayers$head(final Set<? extends IPlayer> players) {
@@ -143,5 +154,49 @@ public abstract class MixinShipObjectServerWorld implements ServerShipWorldCore 
 		}
 		final ChunkWatchTasks newWatchTasks = ChunkWatchTasksImpl.merge(oldWatchTasks, new ChunkWatchTasksImpl(null, unwatchTasks));
 		cir.setReturnValue(newWatchTasks);
+	}
+
+	@Inject(method = "clearNewUpdatedDeletedShipObjectsAndVoxelUpdates", at = @At("HEAD"), remap = false)
+	public void clearNewUpdatedDeletedShipObjectsAndVoxelUpdates(final CallbackInfo ci) {
+		for (final ShipObjectServerWorld.LevelVoxelUpdates updates : this.voxelShapeUpdatesList) {
+			final ServerLevel level = Utils.getLevel(updates.getDimensionId());
+			if (level == null) {
+				continue;
+			}
+			final ChunkSensor sensor = ChunkSensor.get(level);
+			final int maxSectionCount = level.getSectionsCount();
+			for (final IVoxelShapeUpdate update : updates.getUpdates()) {
+				final int x = update.getRegionX(), z = update.getRegionZ();
+				if (VSGameUtilsKt.isChunkInShipyard(level, x, z)) {
+					continue;
+				}
+				final int y = level.getSectionIndexFromSectionY(update.getRegionY());
+				final ChunkPos pos = new ChunkPos(x, z);
+				final boolean isload = update.getVoxelShapeUpdateType() != VoxelShapeUpdateType.DELETE;
+				if (isload) {
+					final AdvancedBitSet sections = this.loadedChunks.computeIfAbsent(pos, (pos0) -> new AdvancedBitSet(maxSectionCount));
+					if (sections.set(y) && sections.count() == maxSectionCount) {
+						TaskUtil.queueTickStart(() -> {
+							sensor.onChunkLoaded(pos);
+						});
+					}
+					continue;
+				}
+				final AdvancedBitSet sections = this.loadedChunks.get(pos);
+				if (sections == null) {
+					// should not happen
+					continue;
+				}
+				if (sections.count() == maxSectionCount) {
+					TaskUtil.queueTickStart(() -> {
+						sensor.onChunkUnload(pos);
+					});
+				}
+				sections.clear(y);
+				if (sections.isEmpty()) {
+					this.loadedChunks.remove(pos);
+				}
+			}
+		}
 	}
 }

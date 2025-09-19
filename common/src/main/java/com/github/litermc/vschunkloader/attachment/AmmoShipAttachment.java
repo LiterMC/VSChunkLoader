@@ -46,7 +46,7 @@ public final class AmmoShipAttachment implements ServerTickListener {
 		this(-1);
 	}
 
-	public AmmoShipAttachment(final long shipId) {
+	private AmmoShipAttachment(final long shipId) {
 		this.server = PlatformHelper.get().getCurrentServer();
 		this.world = VSGameUtilsKt.getShipObjectWorld(this.server);
 		this.shipId = shipId;

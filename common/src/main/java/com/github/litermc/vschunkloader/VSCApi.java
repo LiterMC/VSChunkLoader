@@ -1,5 +1,6 @@
 package com.github.litermc.vschunkloader;
 
+import com.github.litermc.vschunkloader.attachment.AmmoShipAttachment;
 import com.github.litermc.vschunkloader.attachment.ForceLoadAttachment;
 import com.github.litermc.vschunkloader.config.Config;
 
@@ -118,6 +119,14 @@ public final class VSCApi {
 			return false;
 		}
 		return ForceLoadAttachment.get(ship).isForceLoadedBy(token);
+	}
+
+	public static boolean canFreezeShipForChunkLoad(final ServerShip ship) {
+		return switch (Config.shipFreezing) {
+			case ALL -> true;
+			case NONE -> false;
+			case AMMO -> ship.getAttachment(AmmoShipAttachment.class) != null;
+		};
 	}
 
 	private static ServerShip getShip(final MinecraftServer server, final long id) {
