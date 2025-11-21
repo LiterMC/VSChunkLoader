@@ -6,7 +6,7 @@ import com.github.litermc.vschunkloader.platform.PlatformHelper;
 import com.github.litermc.vschunkloader.util.ChunkLoaderManager;
 import com.github.litermc.vschunkloader.util.ChunkSensor;
 import com.github.litermc.vschunkloader.util.TaskUtil;
-import com.github.litermc.vschunkloader.util.Utils;
+import com.github.litermc.vtil.util.LevelUtil;
 
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
@@ -111,7 +111,7 @@ public final class ChunkSensorAttachment implements ShipForcesInducer {
 		if (shipBox == null) {
 			return;
 		}
-		final ServerLevel level = Utils.getLevel(ship.getChunkClaimDimension());
+		final ServerLevel level = LevelUtil.getLevel(ship.getChunkClaimDimension());
 		if (level == null) {
 			return;
 		}
@@ -158,7 +158,7 @@ public final class ChunkSensorAttachment implements ShipForcesInducer {
 		if (shipBox == null) {
 			return;
 		}
-		final ServerLevel level = Utils.getLevel(ship.getChunkClaimDimension());
+		final ServerLevel level = LevelUtil.getLevel(ship.getChunkClaimDimension());
 		if (level == null) {
 			return;
 		}

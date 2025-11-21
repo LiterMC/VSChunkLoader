@@ -7,7 +7,7 @@ import com.github.litermc.vschunkloader.util.ChunkLoaderPlayerHolder;
 import com.github.litermc.vschunkloader.util.ChunkSensor;
 import com.github.litermc.vschunkloader.util.ChunkWatchTasksImpl;
 import com.github.litermc.vschunkloader.util.TaskUtil;
-import com.github.litermc.vschunkloader.util.Utils;
+import com.github.litermc.vtil.util.LevelUtil;
 
 import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
 import net.minecraft.server.level.ServerLevel;
@@ -104,7 +104,7 @@ public abstract class MixinShipObjectServerWorld implements ServerShipWorldCore 
 				this.pendingUnwatchTasks.add(new ChunkWatchTasksImpl.ChunkUnwatchTaskImpl(new ChunkPos(x, z), shipDim, players, true, ship));
 			}
 		});
-		final ServerLevel level = Utils.getLevel(dimId);
+		final ServerLevel level = LevelUtil.getLevel(dimId);
 		if (level == null) {
 			return;
 		}
@@ -159,7 +159,7 @@ public abstract class MixinShipObjectServerWorld implements ServerShipWorldCore 
 	@Inject(method = "clearNewUpdatedDeletedShipObjectsAndVoxelUpdates", at = @At("HEAD"), remap = false)
 	public void clearNewUpdatedDeletedShipObjectsAndVoxelUpdates(final CallbackInfo ci) {
 		for (final ShipObjectServerWorld.LevelVoxelUpdates updates : this.voxelShapeUpdatesList) {
-			final ServerLevel level = Utils.getLevel(updates.getDimensionId());
+			final ServerLevel level = LevelUtil.getLevel(updates.getDimensionId());
 			if (level == null) {
 				continue;
 			}

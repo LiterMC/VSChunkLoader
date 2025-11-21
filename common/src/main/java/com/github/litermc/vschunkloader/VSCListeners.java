@@ -5,7 +5,7 @@ import com.github.litermc.vschunkloader.config.Config;
 import com.github.litermc.vschunkloader.util.ChunkLoaderManager;
 import com.github.litermc.vschunkloader.util.ChunkSensor;
 import com.github.litermc.vschunkloader.util.TaskUtil;
-import com.github.litermc.vschunkloader.util.Utils;
+import com.github.litermc.vtil.util.LevelUtil;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
@@ -22,12 +22,10 @@ public final class VSCListeners {
 	private VSCListeners() {}
 
 	public static void onServerLevelLoad(final ServerLevel level) {
-		Utils.onServerLevelLoad(level);
 		ChunkLoaderManager.get(level);
 	}
 
 	public static void onServerLevelUnload(final ServerLevel level) {
-		Utils.onServerLevelUnload(level);
 	}
 
 	public static void preServerTick(final MinecraftServer server) {
@@ -42,7 +40,7 @@ public final class VSCListeners {
 			} else if (!VSCApi.isForceLoaded(server, ship.getId())) {
 				continue;
 			}
-			final ServerLevel level = Utils.getLevel(ship.getChunkClaimDimension());
+			final ServerLevel level = LevelUtil.getLevel(ship.getChunkClaimDimension());
 			if (level == null) {
 				continue;
 			}

@@ -69,7 +69,7 @@ public class AmmoAssemblerPeripheral implements IPeripheral {
 			throw new LuaException("Already assembling");
 		}
 		TaskUtil.queueTickEnd(() -> {
-			if (!this.assembler.assemble(slugStr)) {
+			if (!this.assembler.startAssemble(slugStr)) {
 				this.queueEvent(ASSEMBLE_FAILED_EVENT_ID, this.peripheralId, true, "Already assembling");
 			}
 		});

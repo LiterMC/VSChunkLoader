@@ -9,7 +9,6 @@
 		"MixinMinecraftPlayer",
 		"MixinServerLevel",
 		"MixinShipObjectServerWorld",
-		"MixinShipSelector",
 		"MixinSleepStatus"
 	],
 	"client": [

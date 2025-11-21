@@ -36,14 +36,12 @@ dependencies {
 	modRuntimeOnly "me.shedaniel.cloth:cloth-config:${cloth_config_version}"
 
 	modCompileOnly "org.valkyrienskies:valkyrienskies-120-fabric:${vs2_version}"
+	modImplementation(include("com.github.litermc.vtil:vtil-fabric-${minecraft_version}:${vtil_version}")) { transitive = false }
 
 	modCompileOnly "maven.modrinth:jade:${jade_version}+fabric"
 	modRuntimeOnly "maven.modrinth:jade:${jade_version}+fabric"
 
 	modCompileOnly "cc.tweaked:cc-tweaked-${minecraft_version}-fabric:${cct_version}"
-
-	modCompileOnly "com.simibubi.create:create-fabric-${minecraft_version}:${create_fabric_version}"
-	modRuntimeOnly "com.simibubi.create:create-fabric-${minecraft_version}:${create_fabric_version}"
 }
 
 loom {

@@ -4,9 +4,9 @@ import com.github.litermc.vschunkloader.Constants;
 import com.github.litermc.vschunkloader.VSCApi;
 import com.github.litermc.vschunkloader.config.Config;
 import com.github.litermc.vschunkloader.platform.PlatformHelper;
-import com.github.litermc.vschunkloader.util.ShipAllocator;
 import com.github.litermc.vschunkloader.util.TaskUtil;
-import com.github.litermc.vschunkloader.util.Utils;
+import com.github.litermc.vtil.api.assemble.ShipAllocator;
+import com.github.litermc.vtil.util.LevelUtil;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -128,11 +128,11 @@ public final class AmmoShipAttachment implements ServerTickListener {
 		if (ship == null) {
 			return;
 		}
-		final ServerLevel level = Utils.getLevel(ship.getChunkClaimDimension());
+		final ServerLevel level = LevelUtil.getLevel(ship.getChunkClaimDimension());
 		if (level == null) {
 			this.world.deleteShip(ship);
 			return;
 		}
-		TaskUtil.queueTickStart(() -> ShipAllocator.get(level).putShip(ship));
+		TaskUtil.queueTickStart(() -> ShipAllocator.get(level.getServer()).putShip(ship));
 	}
 }

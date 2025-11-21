@@ -36,8 +36,6 @@ dependencies {
 	api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10"
 	forge "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-	include modApi("dev.architectury:architectury-forge:${architectury_version}")
-
 	compileOnly project(":common")
 	annotationProcessor "org.spongepowered:mixin:0.8.5-SNAPSHOT:processor"
 	compileOnly annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.0")
@@ -56,6 +54,7 @@ dependencies {
 	implementation "org.valkyrienskies.core:api-game:${vs_core_version}"
 	implementation "org.valkyrienskies.core:util:${vs_core_version}"
 	implementation "org.valkyrienskies.core:impl:${vs_core_version}"
+	modImplementation(include("com.github.litermc.vtil:vtil-forge-${minecraft_version}:${vtil_version}")) { transitive = false }
 
 	implementation "thedarkcolour:kotlinforforge:${kff_version}"
 
@@ -63,9 +62,6 @@ dependencies {
 	modRuntimeOnly "maven.modrinth:jade:${jade_version}+forge"
 
 	modCompileOnly "cc.tweaked:cc-tweaked-${minecraft_version}-forge:${cct_version}"
-
-	modCompileOnly "com.simibubi.create:create-${minecraft_version}:${create_version}:all"
-	modRuntimeOnly "com.simibubi.create:create-${minecraft_version}:${create_version}:all"
 }
 
 shadowJar {

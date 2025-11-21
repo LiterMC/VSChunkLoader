@@ -60,7 +60,7 @@ import java.util.function.Consumer;
 /**
  * The purpose of this mixin is to allow {@link ClientChunkCache} to store ship chunks.
  */
-@Mixin(value = ClientChunkCache.class, priority = 2000)
+@Mixin(value = ClientChunkCache.class, priority = 100) // lower priority (than 1000) for inject to runs first
 public abstract class MixinClientChunkCache implements ClientChunkCacheAccessor, ClientChunkCacheDuck {
 	@Unique
 	private static final LongObjectMap<LevelChunk> EMPTY_NETTY_MAP = new LongObjectHashMap<>();
@@ -91,6 +91,7 @@ public abstract class MixinClientChunkCache implements ClientChunkCacheAccessor,
 		final Consumer<BlockEntityTagOutput> consumer, 
 		final CallbackInfoReturnable<LevelChunk> cir
 	) {
+		System.out.println("packet with: " + x + ", " + z);
 		if (!VSGameUtilsKt.isChunkInShipyard(this.level, x, z)) {
 			return;
 		}

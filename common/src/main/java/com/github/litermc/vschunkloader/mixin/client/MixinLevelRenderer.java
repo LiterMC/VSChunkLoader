@@ -51,11 +51,11 @@ public abstract class MixinLevelRenderer {
 		)
 	)
 	private void afterRefresh(final CallbackInfo ci) {
-		((ClientChunkCacheAccessor) this.level.getChunkSource()).vsc$getShipChunks().forEach((pos, chunk) -> {
+		((ClientChunkCacheAccessor) this.level.getChunkSource()).vsc$getShipChunks().keySet().forEach((pos) -> {
 			final int x = ChunkPos.getX(pos);
 			final int z = ChunkPos.getZ(pos);
 			for (int y = this.level.getMinSection(); y < this.level.getMaxSection(); y++) {
-				this.viewArea.setDirty(x, y, z, false);
+				this.viewArea.setDirty(x, y, z, true);
 			}
 		});
 	}
