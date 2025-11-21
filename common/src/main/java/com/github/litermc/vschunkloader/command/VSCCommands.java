@@ -58,11 +58,6 @@ public final class VSCCommands {
 					.executes(VSCCommands::queryForceLoadTokens)
 				)
 			)
-			.then(Commands.literal("delete")
-				.then(Commands.argument("ships", ShipArgument.Companion.ships())
-					.executes(VSCCommands::delete)
-				)
-			)
 		);
 	}
 
@@ -173,29 +168,5 @@ public final class VSCCommands {
 			return component;
 		}, false);
 		return count + 1;
-	}
-
-	private static int delete(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-		final CommandSourceStack source = context.getSource();
-		final MinecraftServer server = source.getServer();
-		final Set<Ship> ships = ShipArgument.Companion.getShips((CommandContext<VSCommandSource>)((CommandContext<?>)(context)), "ships");
-		int successCount = 0;
-		for (final Ship ship : ships) {
-			if (!(ship instanceof ServerShip serverShip)) {
-				continue;
-			}
-			final ServerLevel level = Utils.getLevel(serverShip.getChunkClaimDimension());
-			if (level == null) {
-				continue;
-			}
-			ShipAllocator.get(level).putShip(serverShip);
-			successCount++;
-		}
-		final int finalSuccessCount = successCount;
-		source.sendSuccess(() ->
-			Component.translatable("command.valkyrienskies.delete.success", finalSuccessCount),
-			true
-		);
-		return finalSuccessCount;
 	}
 }
