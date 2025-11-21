@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:
@@ -63,7 +63,7 @@ jobs:
         id: artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vschunkloader-release-assets
+          name: release-assets
           path: mod-output/*.jar
           overwrite: true
           if-no-files-found: error
@@ -79,7 +79,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: vschunkloader-release-assets
+          name: release-assets
           path: ./release-assets
       - name: Upload Release Assets
         uses: zyxkad/upload-release-asset-dir@v2
@@ -88,3 +88,47 @@ jobs:
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_dir: ./release-assets
+
+  publish_maven:
+    name: Publish Maven
+    runs-on: ubuntu-latest
+    needs:
+      - test
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v5
+        with:
+          path: ./source
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Checkout Maven
+        uses: actions/checkout@v5
+        with:
+          repository: LiterMC/maven
+          ref: maven
+          ssh-key: ${{ secrets.MAVEN_DEPLOY_PRIVATE_KEY }}
+          path: ./maven
+      - name: Publish To Maven
+        env:
+          local_maven_url: file://${{ github.workspace }}/maven
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          WORKDIR=$(pwd)
+          for i in {1..3}; do
+            cd "${WORKDIR}/source"
+            ./gradlew publishMavenJavaPublicationToMavenRepository
+            cd "${WORKDIR}/maven"
+            git add .
+            git commit -m 'publish: ${{ github.repository }} ${{ github.ref_name }}' || exit $?
+            git push origin HEAD:maven && exit 0
+
+            echo "::error::"
+            echo "::error::Push failed, tried $i"
+            echo "::error::"
+
+            git fetch origin maven
+            git reset --hard origin/maven
+          done
+          exit 1
