@@ -91,7 +91,6 @@ public abstract class MixinClientChunkCache implements ClientChunkCacheAccessor,
 		final Consumer<BlockEntityTagOutput> consumer, 
 		final CallbackInfoReturnable<LevelChunk> cir
 	) {
-		System.out.println("packet with: " + x + ", " + z);
 		if (!VSGameUtilsKt.isChunkInShipyard(this.level, x, z)) {
 			return;
 		}
