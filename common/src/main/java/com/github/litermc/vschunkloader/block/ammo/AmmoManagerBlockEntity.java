@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.joml.primitives.AABBd;
 import org.valkyrienskies.core.api.ships.LoadedServerShip;
 import org.valkyrienskies.core.api.ships.ServerShip;
-import org.valkyrienskies.core.apigame.world.ServerShipWorldCore;
+import org.valkyrienskies.core.internal.world.VsiServerShipWorld;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 public final class AmmoManagerBlockEntity extends BlockEntity {
@@ -37,7 +37,7 @@ public final class AmmoManagerBlockEntity extends BlockEntity {
 
 	public void serverTick() {
 		final ServerLevel level = (ServerLevel) (this.getLevel());
-		final ServerShipWorldCore world = VSGameUtilsKt.getShipObjectWorld(level);
+		final VsiServerShipWorld world = VSGameUtilsKt.getShipObjectWorld(level);
 		for (final LoadedServerShip ship : world.getLoadedShips().getIntersecting(this.getManageArea())) {
 			final AmmoShipAttachment attachment = ship.getAttachment(AmmoShipAttachment.class);
 			if (attachment != null) {

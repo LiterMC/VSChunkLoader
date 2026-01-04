@@ -18,7 +18,6 @@ import net.minecraft.server.level.ServerLevel;
 import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.core.api.ships.Ship;
 import org.valkyrienskies.mod.common.command.ShipArgument;
-import org.valkyrienskies.mod.mixinducks.feature.command.VSCommandSource;
 
 import java.util.Set;
 
@@ -32,27 +31,27 @@ public final class VSCCommands {
 		dispatcher.register(Commands.literal(ROOT_LITERAL)
 			.requires((source) -> source.hasPermission(2))
 			.then(Commands.literal("forceload")
-				.then(Commands.argument("ships", ShipArgument.Companion.ships())
+				.then(Commands.argument("ships", ShipArgument.ships())
 					.executes(VSCCommands::forceLoad)
 				)
 			)
 			.then(Commands.literal("unforceload")
-				.then(Commands.argument("ships", ShipArgument.Companion.ships())
+				.then(Commands.argument("ships", ShipArgument.ships())
 					.executes(VSCCommands::unforceLoad)
 				)
 			)
 			.then(Commands.literal("unforceload-all")
-				.then(Commands.argument("ships", ShipArgument.Companion.ships())
+				.then(Commands.argument("ships", ShipArgument.ships())
 					.executes(VSCCommands::unforceLoadAll)
 				)
 			)
 			.then(Commands.literal("is-forceloaded")
-				.then(Commands.argument("ships", ShipArgument.Companion.ships())
+				.then(Commands.argument("ships", ShipArgument.ships())
 					.executes(VSCCommands::isForceLoaded)
 				)
 			)
 			.then(Commands.literal("query-forceload-tokens")
-				.then(Commands.argument("ships", ShipArgument.Companion.ships())
+				.then(Commands.argument("ships", ShipArgument.ships())
 					.executes(VSCCommands::queryForceLoadTokens)
 				)
 			)
@@ -62,7 +61,7 @@ public final class VSCCommands {
 	private static int forceLoad(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
 		final CommandSourceStack source = context.getSource();
 		final MinecraftServer server = source.getServer();
-		final Set<Ship> ships = ShipArgument.Companion.getShips((CommandContext<VSCommandSource>)((CommandContext<?>)(context)), "ships");
+		final Set<Ship> ships = ShipArgument.getShips(context, "ships");
 		int successCount = 0;
 		for (final Ship ship : ships) {
 			if (VSCApi.forceLoad(server, ship.getId(), FORCELOAD_TOKEN, true)) {
@@ -80,7 +79,7 @@ public final class VSCCommands {
 	private static int unforceLoad(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
 		final CommandSourceStack source = context.getSource();
 		final MinecraftServer server = source.getServer();
-		final Set<Ship> ships = ShipArgument.Companion.getShips((CommandContext<VSCommandSource>)((CommandContext<?>)(context)), "ships");
+		final Set<Ship> ships = ShipArgument.getShips(context, "ships");
 		int successCount = 0;
 		for (final Ship ship : ships) {
 			if (VSCApi.forceLoad(server, ship.getId(), FORCELOAD_TOKEN, false)) {
@@ -98,7 +97,7 @@ public final class VSCCommands {
 	private static int unforceLoadAll(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
 		final CommandSourceStack source = context.getSource();
 		final MinecraftServer server = source.getServer();
-		final Set<Ship> ships = ShipArgument.Companion.getShips((CommandContext<VSCommandSource>)((CommandContext<?>)(context)), "ships");
+		final Set<Ship> ships = ShipArgument.getShips(context, "ships");
 		int successCount = 0;
 		for (final Ship ship : ships) {
 			if (VSCApi.clearForceLoadTokens(server, ship.getId())) {
@@ -116,7 +115,7 @@ public final class VSCCommands {
 	private static int isForceLoaded(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
 		final CommandSourceStack source = context.getSource();
 		final MinecraftServer server = source.getServer();
-		final Set<Ship> ships = ShipArgument.Companion.getShips((CommandContext<VSCommandSource>)((CommandContext<?>)(context)), "ships");
+		final Set<Ship> ships = ShipArgument.getShips(context, "ships");
 		int loadedCount = 0;
 		for (final Ship ship : ships) {
 			if (VSCApi.isForceLoaded(server, ship.getId())) {
@@ -136,7 +135,7 @@ public final class VSCCommands {
 	private static int queryForceLoadTokens(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
 		final CommandSourceStack source = context.getSource();
 		final MinecraftServer server = source.getServer();
-		final Set<Ship> ships = ShipArgument.Companion.getShips((CommandContext<VSCommandSource>)((CommandContext<?>)(context)), "ships");
+		final Set<Ship> ships = ShipArgument.getShips(context, "ships");
 		if (ships.isEmpty()) {
 			source.sendFailure(Component.translatable("argument.valkyrienskies.ship.no_found"));
 			return 0;

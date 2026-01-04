@@ -63,10 +63,5 @@ public final class Config {
 	 */
 	public static int ammoManagerAnchoringRange = 16 * 4;
 
-	/**
-	 * Freeze ship for chunk loading. Avoid velocity reset when moving at high speed
-	 */
-	public static FreezeMode shipFreezing = FreezeMode.AMMO;
-
 	private Config() {}
 }

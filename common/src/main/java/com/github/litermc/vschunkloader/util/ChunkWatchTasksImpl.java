@@ -3,72 +3,72 @@ package com.github.litermc.vschunkloader.util;
 import net.minecraft.world.level.ChunkPos;
 
 import org.valkyrienskies.core.api.ships.ServerShip;
-import org.valkyrienskies.core.apigame.world.IPlayer;
-import org.valkyrienskies.core.apigame.world.chunks.ChunkUnwatchTask;
-import org.valkyrienskies.core.apigame.world.chunks.ChunkWatchTask;
-import org.valkyrienskies.core.apigame.world.chunks.ChunkWatchTasks;
+import org.valkyrienskies.core.internal.world.VsiPlayer;
+import org.valkyrienskies.core.internal.world.chunks.VsiChunkUnwatchTask;
+import org.valkyrienskies.core.internal.world.chunks.VsiChunkWatchTask;
+import org.valkyrienskies.core.internal.world.chunks.VsiChunkWatchTasks;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Collections;
 
-public final class ChunkWatchTasksImpl implements ChunkWatchTasks {
-	private final SortedSet<ChunkWatchTask> watchTasks;
-	private final SortedSet<ChunkUnwatchTask> unwatchTasks;
+public final class ChunkWatchTasksImpl implements VsiChunkWatchTasks {
+	private final SortedSet<VsiChunkWatchTask> watchTasks;
+	private final SortedSet<VsiChunkUnwatchTask> unwatchTasks;
 
-	public ChunkWatchTasksImpl(final SortedSet<ChunkWatchTask> watchTasks, final SortedSet<ChunkUnwatchTask> unwatchTasks) {
+	public ChunkWatchTasksImpl(final SortedSet<VsiChunkWatchTask> watchTasks, final SortedSet<VsiChunkUnwatchTask> unwatchTasks) {
 		this.watchTasks = watchTasks == null ? Collections.emptySortedSet() : watchTasks;
 		this.unwatchTasks = unwatchTasks == null ? Collections.emptySortedSet() : unwatchTasks;
 	}
 
-	public static ChunkWatchTasks merge(final ChunkWatchTasks a, final ChunkWatchTasks b) {
+	public static VsiChunkWatchTasks merge(final VsiChunkWatchTasks a, final VsiChunkWatchTasks b) {
 		return new ChunkWatchTasksImpl(mergeWatchSet(a.getWatchTasks(), b.getWatchTasks()), mergeUnwatchSet(a.getUnwatchTasks(), b.getUnwatchTasks()));
 	}
 
 	@Override
-	public SortedSet<ChunkWatchTask> getWatchTasks() {
+	public SortedSet<VsiChunkWatchTask> getWatchTasks() {
 		return this.watchTasks;
 	}
 
 	@Override
-	public SortedSet<ChunkUnwatchTask> getUnwatchTasks() {
+	public SortedSet<VsiChunkUnwatchTask> getUnwatchTasks() {
 		return this.unwatchTasks;
 	}
 
-	public static SortedSet<ChunkWatchTask> mergeWatchSet(final SortedSet<ChunkWatchTask> a, final SortedSet<ChunkWatchTask> b) {
+	public static SortedSet<VsiChunkWatchTask> mergeWatchSet(final SortedSet<VsiChunkWatchTask> a, final SortedSet<VsiChunkWatchTask> b) {
 		if (a.isEmpty()) {
 			return b;
 		}
 		if (b.isEmpty()) {
 			return a;
 		}
-		final SortedSet<ChunkWatchTask> set = new TreeSet<>((x, y) -> Long.compare(x.getChunkPos(), y.getChunkPos()));
+		final SortedSet<VsiChunkWatchTask> set = new TreeSet<>((x, y) -> Long.compare(x.getChunkPos(), y.getChunkPos()));
 		set.addAll(a);
 		set.addAll(b);
 		return set;
 	}
 
-	public static SortedSet<ChunkUnwatchTask> mergeUnwatchSet(final SortedSet<ChunkUnwatchTask> a, final SortedSet<ChunkUnwatchTask> b) {
+	public static SortedSet<VsiChunkUnwatchTask> mergeUnwatchSet(final SortedSet<VsiChunkUnwatchTask> a, final SortedSet<VsiChunkUnwatchTask> b) {
 		if (a.isEmpty()) {
 			return b;
 		}
 		if (b.isEmpty()) {
 			return a;
 		}
-		final SortedSet<ChunkUnwatchTask> set = new TreeSet<>((x, y) -> Long.compare(x.getChunkPos(), y.getChunkPos()));
+		final SortedSet<VsiChunkUnwatchTask> set = new TreeSet<>((x, y) -> Long.compare(x.getChunkPos(), y.getChunkPos()));
 		set.addAll(a);
 		set.addAll(b);
 		return set;
 	}
 
-	public static final class ChunkUnwatchTaskImpl implements ChunkUnwatchTask {
+	public static final class ChunkUnwatchTaskImpl implements VsiChunkUnwatchTask {
 		private final ChunkPos chunkPos;
 		private final String dimension;
-		private final Iterable<IPlayer> players;
+		private final Iterable<VsiPlayer> players;
 		private final boolean shouldUnload;
 		private final ServerShip ship;
 
-		public ChunkUnwatchTaskImpl(final ChunkPos chunkPos, final String dimension, final Iterable<IPlayer> players, final boolean shouldUnload, final ServerShip ship) {
+		public ChunkUnwatchTaskImpl(final ChunkPos chunkPos, final String dimension, final Iterable<VsiPlayer> players, final boolean shouldUnload, final ServerShip ship) {
 			this.chunkPos = chunkPos;
 			this.dimension = dimension;
 			this.players = players;
@@ -87,7 +87,7 @@ public final class ChunkWatchTasksImpl implements ChunkWatchTasks {
 		}
 
 		@Override
-		public Iterable<IPlayer> getPlayersNeedUnwatching() {
+		public Iterable<VsiPlayer> getPlayersNeedUnwatching() {
 			return this.players;
 		}
 
@@ -112,7 +112,7 @@ public final class ChunkWatchTasksImpl implements ChunkWatchTasks {
 		}
 
 		@Override
-		public int compareTo(final ChunkUnwatchTask task) {
+		public int compareTo(final VsiChunkUnwatchTask task) {
 			return 0;
 		}
 	}

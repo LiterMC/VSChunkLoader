@@ -18,7 +18,7 @@ public class VSChunkLoaderMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		VSCRegistry.register();
+		VSCListeners.onModInit();
 		BlockCapabilityProviders.register();
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> VSCCommands.register(dispatcher));

@@ -7,7 +7,9 @@ import net.minecraft.resources.ResourceLocation;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import org.valkyrienskies.core.api.ships.LoadedServerShip;
 import org.valkyrienskies.core.api.ships.ServerShip;
+import org.valkyrienskies.core.impl.game.ships.ShipData;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,12 +28,19 @@ public final class ForceLoadAttachment {
 	public ForceLoadAttachment() {}
 
 	public static ForceLoadAttachment get(final ServerShip ship) {
-		ForceLoadAttachment attachment = ship.getAttachment(ForceLoadAttachment.class);
-		if (attachment == null) {
-			attachment = new ForceLoadAttachment();
-			ship.saveAttachment(ForceLoadAttachment.class, attachment);
+		if (ship instanceof final LoadedServerShip loadedShip) {
+			ForceLoadAttachment attachment = loadedShip.getAttachment(ForceLoadAttachment.class);
+			if (attachment == null) {
+				attachment = new ForceLoadAttachment();
+				loadedShip.setAttachment(attachment);
+			}
+			return attachment;
 		}
-		return attachment;
+		if (ship instanceof final ShipData shipData) {
+			final var attachmentHolder = shipData.getAttachmentHolder();
+			return attachmentHolder.getOrPutAttachment(ForceLoadAttachment.class, ForceLoadAttachment::new);
+		}
+		throw new IllegalArgumentException("ship is neither LoadedServerShip nor ShipData");
 	}
 
 	@JsonGetter("forceLoadTokens")

@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 
-import org.valkyrienskies.core.apigame.world.IPlayer;
+import org.valkyrienskies.core.internal.world.VsiPlayer;
 import org.valkyrienskies.mod.common.util.MinecraftPlayer;
 
 import java.util.UUID;
@@ -21,7 +21,7 @@ public final class ChunkLoaderPlayerHolder {
 	private final GameProfile fakeGameProfile;
 	private Vec3 position;
 	private IChunkLoaderFakePlayer fakePlayer;
-	private IPlayer playerData;
+	private VsiPlayer playerData;
 
 	private ChunkLoaderPlayerHolder(final ServerLevel level, final Vec3 position, final String name) {
 		this.level = level;
@@ -56,7 +56,7 @@ public final class ChunkLoaderPlayerHolder {
 		return new ChunkLoaderPlayerHolder(level, position, name);
 	}
 
-	public IPlayer getPlayerData() {
+	public VsiPlayer getPlayerData() {
 		return this.playerData;
 	}
 

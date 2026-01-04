@@ -146,6 +146,7 @@ repositories {
 			includeGroup('com.jamieswhiteshirt')
 		}
 	}
+
 	exclusiveContent {
 		forRepository {
 			maven {

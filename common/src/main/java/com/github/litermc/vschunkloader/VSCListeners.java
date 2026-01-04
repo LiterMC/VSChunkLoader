@@ -1,6 +1,7 @@
 package com.github.litermc.vschunkloader;
 
-import com.github.litermc.vschunkloader.attachment.ChunkSensorAttachment;
+import com.github.litermc.vschunkloader.attachment.AmmoShipAttachment;
+import com.github.litermc.vschunkloader.attachment.ForceLoadAttachment;
 import com.github.litermc.vschunkloader.config.Config;
 import com.github.litermc.vschunkloader.util.ChunkLoaderManager;
 import com.github.litermc.vschunkloader.util.ChunkSensor;
@@ -17,9 +18,20 @@ import org.valkyrienskies.core.api.ships.LoadedServerShip;
 import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.core.api.world.ServerShipWorld;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
+import org.valkyrienskies.mod.common.ValkyrienSkiesMod;
 
 public final class VSCListeners {
 	private VSCListeners() {}
+
+	public static void onModInit() {
+		VSCRegistry.register();
+		registerAttachments();
+	}
+
+	private static void registerAttachments() {
+		ValkyrienSkiesMod.getApi().registerAttachment(AmmoShipAttachment.class);
+		ValkyrienSkiesMod.getApi().registerAttachment(ForceLoadAttachment.class);
+	}
 
 	public static void onServerLevelLoad(final ServerLevel level) {
 		ChunkLoaderManager.get(level);
@@ -45,10 +57,6 @@ public final class VSCListeners {
 				continue;
 			}
 			ChunkLoaderManager.get(level).refreshForcedShip(ship);
-		}
-
-		for (final LoadedServerShip ship : shipWorld.getLoadedShips()) {
-			ChunkSensorAttachment.get(ship).serverTick(ship);
 		}
 	}
 

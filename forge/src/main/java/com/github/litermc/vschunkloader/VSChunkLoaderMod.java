@@ -27,7 +27,7 @@ public class VSChunkLoaderMod {
 		final FMLJavaModLoadingContext context = FMLJavaModLoadingContext.get();
 		final IEventBus modBus = context.getModEventBus();
 
-		VSCRegistry.register();
+		VSCListeners.onModInit();
 		BlockCapabilityProviders.register();
 
 		context.registerConfig(ModConfig.Type.SERVER, ((ForgeConfigFile)(ConfigSpec.serverSpec)).spec());

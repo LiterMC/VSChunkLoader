@@ -111,8 +111,18 @@ public abstract class MixinClientChunkCache implements ClientChunkCacheAccessor,
 		}
 
 		this.level.onChunkLoaded(pos);
-		SodiumCompat.onChunkAdded(this.level, x, z);
+		if (ValkyrienCommonMixinConfigPlugin.getVSRenderer() == VSRenderer.SODIUM) {
+			SodiumCompat.onChunkAdded(this.level, x, z);
+		}
 		cir.setReturnValue(worldChunk);
+	}
+
+	@Inject(method = "drop", at = @At("HEAD"), cancellable = true)
+	public void preUnload(final int x, final int z, final CallbackInfo ci) {
+		if (VSGameUtilsKt.isChunkInShipyard(this.level, x, z)) {
+			this.removeShipChunk(x, z);
+			ci.cancel();
+		}
 	}
 
 	@Override
@@ -126,17 +136,18 @@ public abstract class MixinClientChunkCache implements ClientChunkCacheAccessor,
 	}
 
 	@Unique
-	private void removeShipChunk(final int chunkX, final int chunkZ) {
-		final LevelChunk chunk = this.shipChunks.remove(ChunkPos.asLong(chunkX, chunkZ));
+	private void removeShipChunk(final int x, final int z) {
+		final LevelChunk chunk = this.shipChunks.remove(ChunkPos.asLong(x, z));
 		if (chunk == null) {
 			return;
 		}
 		this.level.unload(chunk);
-		if (ValkyrienCommonMixinConfigPlugin.getVSRenderer() != VSRenderer.SODIUM) {
+		if (ValkyrienCommonMixinConfigPlugin.getVSRenderer() == VSRenderer.SODIUM) {
+			SodiumCompat.onChunkRemoved(this.level, x, z);
+		} else {
 			((IVSViewAreaMethods) ((LevelRendererAccessor) ((ClientLevelAccessor) this.level).getLevelRenderer()).getViewArea())
-				.unloadChunk(chunkX, chunkZ);
+				.unloadChunk(x, z);
 		}
-		SodiumCompat.onChunkRemoved(this.level, chunkX, chunkZ);
 	}
 
 	@Inject(
@@ -145,13 +156,13 @@ public abstract class MixinClientChunkCache implements ClientChunkCacheAccessor,
 		cancellable = true
 	)
 	public void preGetChunk(
-		final int chunkX,
-		final int chunkZ,
+		final int x,
+		final int z,
 		final ChunkStatus chunkStatus,
 		final boolean bl,
 		final CallbackInfoReturnable<LevelChunk> cir
 	) {
-		final LevelChunk shipChunk = this.shipChunks.get(ChunkPos.asLong(chunkX, chunkZ));
+		final LevelChunk shipChunk = this.shipChunks.get(ChunkPos.asLong(x, z));
 		if (shipChunk != null) {
 			cir.setReturnValue(shipChunk);
 		}

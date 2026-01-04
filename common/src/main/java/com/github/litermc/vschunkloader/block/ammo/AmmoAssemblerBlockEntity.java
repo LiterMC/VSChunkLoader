@@ -32,12 +32,13 @@ import org.joml.Vector3d;
 import org.joml.Vector3i;
 import org.joml.primitives.AABBi;
 import org.joml.primitives.AABBic;
+import org.valkyrienskies.core.api.ships.LoadedServerShip;
 import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.core.api.ships.ServerShipTransformProvider;
 import org.valkyrienskies.core.api.ships.properties.ShipTransform;
-import org.valkyrienskies.core.apigame.world.ServerShipWorldCore;
 import org.valkyrienskies.core.impl.game.ShipTeleportDataImpl;
 import org.valkyrienskies.core.impl.game.ships.ShipTransformImpl;
+import org.valkyrienskies.core.internal.world.VsiServerShipWorld;
 import org.valkyrienskies.core.util.datastructures.DenseBlockPosSet;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
@@ -265,7 +266,9 @@ public class AmmoAssemblerBlockEntity extends AbstractAssemblerBlockEntity {
 		if (ship.getSlug() == null) {
 			ship.setSlug(AMMO_DEFAULT_SLUG_PREFIX + ship.getId());
 		}
-		AmmoShipAttachment.create(ship);
+		final VsiServerShipWorld shipWorld = VSGameUtilsKt.getShipObjectWorld((ServerLevel) (this.getLevel()));
+		final LoadedServerShip loadedShip = shipWorld.getLoadedShips().getById(ship.getId());
+		AmmoShipAttachment.create(loadedShip == null ? ship : loadedShip);
 	}
 
 	private static Stream<BlockPos> streamBlocksInAABB(AABB box) {

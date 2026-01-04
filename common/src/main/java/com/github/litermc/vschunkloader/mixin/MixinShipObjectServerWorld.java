@@ -22,20 +22,14 @@ import org.joml.Vector3dc;
 import org.valkyrienskies.core.api.ships.LoadedServerShip;
 import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.core.api.ships.properties.IShipActiveChunksSet;
-import org.valkyrienskies.core.apigame.ShipTeleportData;
-import org.valkyrienskies.core.apigame.world.IPlayer;
-import org.valkyrienskies.core.apigame.world.ServerShipWorldCore;
-import org.valkyrienskies.core.apigame.world.chunks.ChunkUnwatchTask;
-import org.valkyrienskies.core.apigame.world.chunks.ChunkWatchTask;
-import org.valkyrienskies.core.apigame.world.chunks.ChunkWatchTasks;
-import org.valkyrienskies.core.impl.game.ships.ShipObjectServerWorld;
-import org.valkyrienskies.core.impl.networking.simple.SimplePackets;
+import org.valkyrienskies.core.internal.ShipTeleportData;
+import org.valkyrienskies.core.internal.world.VsiPlayer;
+import org.valkyrienskies.core.internal.world.VsiServerShipWorld;
+import org.valkyrienskies.core.internal.world.chunks.VsiChunkUnwatchTask;
+import org.valkyrienskies.core.internal.world.chunks.VsiChunkWatchTasks;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
-import org.valkyrienskies.mod.common.networking.PacketRestartChunkUpdates;
 import org.valkyrienskies.mod.common.util.MinecraftPlayer;
 import org.valkyrienskies.mod.mixin.accessors.server.level.ChunkMapAccessor;
-import org.valkyrienskies.physics_api.voxel.updates.IVoxelShapeUpdate;
-import org.valkyrienskies.physics_api.voxel.updates.VoxelShapeUpdateType;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -58,23 +52,31 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 
-@Mixin(ShipObjectServerWorld.class)
-public abstract class MixinShipObjectServerWorld implements ServerShipWorldCore {
+@Mixin(org.valkyrienskies.core.impl.shadow.Er.class)
+public abstract class MixinShipObjectServerWorld implements VsiServerShipWorld {
+	@Unique
+	private static final String M_clearNewUpdatedDeletedShipObjectsAndVoxelUpdates = "j";
+
 	@Shadow(remap = false)
 	@Final
-	private ArrayList<ShipObjectServerWorld.LevelVoxelUpdates> voxelShapeUpdatesList;
+	private ArrayList<org.valkyrienskies.core.impl.shadow.Er.b> j;
 	@Unique
-	private final Set<IPlayer> disconnectedPlayers = new HashSet<>();
+	private final Set<VsiPlayer> disconnectedPlayers = new HashSet<>();
 	@Unique
 	private final Map<Long, String> teleportedShips = new HashMap<>();
 	@Unique
-	private final SortedSet<ChunkUnwatchTask> pendingUnwatchTasks = new TreeSet<>((a, b) -> Long.compare(a.getChunkPos(), b.getChunkPos()));
+	private final SortedSet<VsiChunkUnwatchTask> pendingUnwatchTasks = new TreeSet<>((a, b) -> Long.compare(a.getChunkPos(), b.getChunkPos()));
 	@Unique
 	private final Map<ChunkPos, AdvancedBitSet> loadedChunks = new HashMap<>();
 
+	@Unique
+	public ArrayList<org.valkyrienskies.core.impl.shadow.Er.b> getVoxelShapeUpdatesList() {
+		return this.j;
+	}
+
 	@ModifyVariable(method = "setPlayers", at = @At("HEAD"), remap = false)
-	public Set<? extends IPlayer> setPlayers$head(final Set<? extends IPlayer> players) {
-		final HashSet<IPlayer> playerSet = new HashSet<>(players);
+	public Set<? extends VsiPlayer> setPlayers$head(final Set<? extends VsiPlayer> players) {
+		final HashSet<VsiPlayer> playerSet = new HashSet<>(players);
 		for (final ServerLevel level : PlatformHelper.get().getCurrentServer().getAllLevels()) {
 			ChunkLoaderManager.get(level).streamChunkLoaders()
 				.map(ChunkLoaderPlayerHolder::getPlayerData)
@@ -84,7 +86,7 @@ public abstract class MixinShipObjectServerWorld implements ServerShipWorldCore 
 	}
 
 	@Inject(method = "onDisconnect", at = @At("RETURN"), remap = false)
-	public void onDisconnect(final IPlayer player, final CallbackInfo ci) {
+	public void onDisconnect(final VsiPlayer player, final CallbackInfo ci) {
 		this.disconnectedPlayers.add(player);
 	}
 
@@ -98,7 +100,7 @@ public abstract class MixinShipObjectServerWorld implements ServerShipWorldCore 
 		}
 		this.teleportedShips.put(ship.getId(), shipDim);
 		ship.getActiveChunksSet().forEach((x, z) -> {
-			final HashSet<IPlayer> players = new HashSet<>();
+			final HashSet<VsiPlayer> players = new HashSet<>();
 			this.getIPlayersWatchingShipChunk(x, z, shipDim).forEachRemaining(players::add);
 			if (!players.isEmpty()) {
 				this.pendingUnwatchTasks.add(new ChunkWatchTasksImpl.ChunkUnwatchTaskImpl(new ChunkPos(x, z), shipDim, players, true, ship));
@@ -113,20 +115,20 @@ public abstract class MixinShipObjectServerWorld implements ServerShipWorldCore 
 	}
 
 	@Inject(method = "getChunkWatchTasks", at = @At("RETURN"), remap = false, cancellable = true)
-	public void getChunkWatchTasks(final CallbackInfoReturnable<ChunkWatchTasks> cir) {
+	public void getChunkWatchTasks(final CallbackInfoReturnable<VsiChunkWatchTasks> cir) {
 		if (this.disconnectedPlayers.isEmpty() && this.teleportedShips.isEmpty() && this.pendingUnwatchTasks.isEmpty()) {
 			return;
 		}
-		final ChunkWatchTasks oldWatchTasks = cir.getReturnValue();
-		final SortedSet<ChunkUnwatchTask> unwatchTasks = new TreeSet<>((a, b) -> Long.compare(a.getChunkPos(), b.getChunkPos()));
+		final VsiChunkWatchTasks oldWatchTasks = cir.getReturnValue();
+		final SortedSet<VsiChunkUnwatchTask> unwatchTasks = new TreeSet<>((a, b) -> Long.compare(a.getChunkPos(), b.getChunkPos()));
 		unwatchTasks.addAll(this.pendingUnwatchTasks);
 		this.pendingUnwatchTasks.clear();
 		if (!this.disconnectedPlayers.isEmpty()) {
 			for (final LoadedServerShip ship : this.getLoadedShips()) {
 				final String dim = ship.getChunkClaimDimension();
 				ship.getActiveChunksSet().forEach((x, z) -> {
-					final HashSet<IPlayer> players = new HashSet<>(this.disconnectedPlayers);
-					final HashSet<IPlayer> oldPlayers = new HashSet<>();
+					final HashSet<VsiPlayer> players = new HashSet<>(this.disconnectedPlayers);
+					final HashSet<VsiPlayer> oldPlayers = new HashSet<>();
 					this.getIPlayersWatchingShipChunk(x, z, dim).forEachRemaining(oldPlayers::add);
 					players.removeIf(Predicate.not(oldPlayers::contains));
 					final boolean shouldUnload = players.size() == oldPlayers.size();
@@ -152,27 +154,27 @@ public abstract class MixinShipObjectServerWorld implements ServerShipWorldCore 
 				teleportedShipSet.contains(this.getAllShips().getByChunkPos(t.getChunkX(), t.getChunkZ(), t.getDimensionId()))
 			);
 		}
-		final ChunkWatchTasks newWatchTasks = ChunkWatchTasksImpl.merge(oldWatchTasks, new ChunkWatchTasksImpl(null, unwatchTasks));
+		final VsiChunkWatchTasks newWatchTasks = ChunkWatchTasksImpl.merge(oldWatchTasks, new ChunkWatchTasksImpl(null, unwatchTasks));
 		cir.setReturnValue(newWatchTasks);
 	}
 
-	@Inject(method = "clearNewUpdatedDeletedShipObjectsAndVoxelUpdates", at = @At("HEAD"), remap = false)
+	@Inject(method = M_clearNewUpdatedDeletedShipObjectsAndVoxelUpdates + "()V", at = @At("HEAD"), remap = false)
 	public void clearNewUpdatedDeletedShipObjectsAndVoxelUpdates(final CallbackInfo ci) {
-		for (final ShipObjectServerWorld.LevelVoxelUpdates updates : this.voxelShapeUpdatesList) {
-			final ServerLevel level = LevelUtil.getLevel(updates.getDimensionId());
+		for (final org.valkyrienskies.core.impl.shadow.Er.b updates : this.getVoxelShapeUpdatesList()) {
+			final ServerLevel level = LevelUtil.getLevel(updates.a());
 			if (level == null) {
 				continue;
 			}
 			final ChunkSensor sensor = ChunkSensor.get(level);
 			final int maxSectionCount = level.getSectionsCount();
-			for (final IVoxelShapeUpdate update : updates.getUpdates()) {
-				final int x = update.getRegionX(), z = update.getRegionZ();
+			for (final org.valkyrienskies.core.impl.shadow.Il update : updates.b()) {
+				final int x = update.a(), z = update.c();
 				if (VSGameUtilsKt.isChunkInShipyard(level, x, z)) {
 					continue;
 				}
-				final int y = level.getSectionIndexFromSectionY(update.getRegionY());
+				final int y = level.getSectionIndexFromSectionY(update.b());
 				final ChunkPos pos = new ChunkPos(x, z);
-				final boolean isload = update.getVoxelShapeUpdateType() != VoxelShapeUpdateType.DELETE;
+				final boolean isload = update.d() != org.valkyrienskies.core.impl.shadow.Ip.DELETE;
 				if (isload) {
 					final AdvancedBitSet sections = this.loadedChunks.computeIfAbsent(pos, (pos0) -> new AdvancedBitSet(maxSectionCount));
 					if (sections.set(y) && sections.count() == maxSectionCount) {

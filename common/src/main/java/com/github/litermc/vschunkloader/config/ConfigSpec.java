@@ -25,8 +25,6 @@ public final class ConfigSpec {
 	public static final ConfigFile.Value<Boolean> REMOVE_AMMO_AFTER_EXPIRED;
 	public static final ConfigFile.Value<Integer> AMMO_MANAGER_ANCHORING_RANGE;
 
-	public static final ConfigFile.Value<FreezeMode> SHIP_FREEZING;
-
 	private ConfigSpec() {}
 
 	static {
@@ -92,21 +90,6 @@ public final class ConfigSpec {
 
 			builder.pop();
 		}
-		{
-			builder
-				.comment("Experimental settings. UNSTABLE. May get changed / removed in the future")
-				.push("experimental");
-
-			SHIP_FREEZING = builder
-				.comment(
-					"Freeze ship for chunk loading. Avoid velocity reset when moving at high speed\n" +
-					"ALL: Freeze any ship that hitting a loading chunk\n" +
-					"AMMO: Only freeze ammo ship which hitting a loading chunk\n" +
-					"NONE: Do not freeze any ship"
-				)
-				.defineEnum("ship_freezing", Config.shipFreezing);
-			builder.pop();
-		}
 
 		serverSpec = builder.build(ConfigSpec::syncServer);
 	}
@@ -123,7 +106,6 @@ public final class ConfigSpec {
 		Config.ammoMaxActivateSeconds = AMMO_MAX_ACTIVATE_SECONDS.get();
 		Config.removeAmmoAfterExpired = REMOVE_AMMO_AFTER_EXPIRED.get();
 		Config.ammoManagerAnchoringRange = AMMO_MANAGER_ANCHORING_RANGE.get();
-		Config.shipFreezing = SHIP_FREEZING.get();
 	}
 
 	public static void syncClient(Path path) {
