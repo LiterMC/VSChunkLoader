@@ -44,5 +44,7 @@ public class VSChunkLoaderMod implements ModInitializer {
 		ServerTickEvents.END_SERVER_TICK.register(VSCListeners::postServerTick);
 		ServerChunkEvents.CHUNK_LOAD.register(VSCListeners::onServerChunkLoad);
 		ServerChunkEvents.CHUNK_UNLOAD.register(VSCListeners::onServerChunkUnload);
+
+		VSCListeners.onModSetup();
 	}
 }

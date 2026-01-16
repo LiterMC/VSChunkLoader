@@ -25,6 +25,9 @@ public final class VSCListeners {
 
 	public static void onModInit() {
 		VSCRegistry.register();
+	}
+
+	public static void onModSetup() {
 		registerAttachments();
 	}
 
