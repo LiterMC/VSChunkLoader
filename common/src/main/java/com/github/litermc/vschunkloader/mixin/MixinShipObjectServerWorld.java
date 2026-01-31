@@ -87,6 +87,9 @@ public abstract class MixinShipObjectServerWorld implements VsiServerShipWorld {
 
 	@Inject(method = "onDisconnect", at = @At("RETURN"), remap = false)
 	public void onDisconnect(final VsiPlayer player, final CallbackInfo ci) {
+		if (!(((Object) (player)) instanceof VsiPlayer)) {
+			throw new RuntimeException("VsiPlayer verify failed on " + player);
+		}
 		this.disconnectedPlayers.add(player);
 	}
 

@@ -1,7 +1,7 @@
 package com.github.litermc.vschunkloader;
 
 import com.github.litermc.vschunkloader.attachment.AmmoShipAttachment;
-import com.github.litermc.vschunkloader.attachment.ForceLoadAttachment;
+import com.github.litermc.vschunkloader.attachment.ForceLoadStorage;
 import com.github.litermc.vschunkloader.config.Config;
 
 import net.minecraft.resources.ResourceLocation;
@@ -45,7 +45,7 @@ public final class VSCApi {
 		if (ship == null) {
 			return false;
 		}
-		final ForceLoadAttachment attachment = ForceLoadAttachment.get(ship);
+		final ForceLoadStorage attachment = ForceLoadStorage.get(ship);
 		if (load) {
 			attachment.addForceLoad(token);
 		} else {
@@ -68,7 +68,7 @@ public final class VSCApi {
 		if (ship == null) {
 			return false;
 		}
-		final ForceLoadAttachment attachment = ForceLoadAttachment.get(ship);
+		final ForceLoadStorage attachment = ForceLoadStorage.get(ship);
 		attachment.removeAllForceLoadTokens();
 		return true;
 	}
@@ -86,7 +86,7 @@ public final class VSCApi {
 		if (ship == null) {
 			return null;
 		}
-		final ForceLoadAttachment attachment = ForceLoadAttachment.get(ship);
+		final ForceLoadStorage attachment = ForceLoadStorage.get(ship);
 		return attachment.getAllForceLoadTokens();
 	}
 
@@ -102,7 +102,7 @@ public final class VSCApi {
 		if (ship == null) {
 			return false;
 		}
-		return ForceLoadAttachment.get(ship).isForceLoaded();
+		return ForceLoadStorage.get(ship).isForceLoaded();
 	}
 
 	/**
@@ -118,7 +118,7 @@ public final class VSCApi {
 		if (ship == null) {
 			return false;
 		}
-		return ForceLoadAttachment.get(ship).isForceLoadedBy(token);
+		return ForceLoadStorage.get(ship).isForceLoadedBy(token);
 	}
 
 	private static ServerShip getShip(final MinecraftServer server, final long id) {

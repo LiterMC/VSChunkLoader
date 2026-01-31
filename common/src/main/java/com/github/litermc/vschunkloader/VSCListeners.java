@@ -1,7 +1,6 @@
 package com.github.litermc.vschunkloader;
 
 import com.github.litermc.vschunkloader.attachment.AmmoShipAttachment;
-import com.github.litermc.vschunkloader.attachment.ForceLoadAttachment;
 import com.github.litermc.vschunkloader.config.Config;
 import com.github.litermc.vschunkloader.util.ChunkLoaderManager;
 import com.github.litermc.vschunkloader.util.ChunkSensor;
@@ -33,7 +32,6 @@ public final class VSCListeners {
 
 	private static void registerAttachments() {
 		ValkyrienSkiesMod.getApi().registerAttachment(AmmoShipAttachment.class);
-		ValkyrienSkiesMod.getApi().registerAttachment(ForceLoadAttachment.class);
 	}
 
 	public static void onServerLevelLoad(final ServerLevel level) {
