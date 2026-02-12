@@ -171,6 +171,11 @@ public class PlatformHelperImpl implements PlatformHelper {
 		return FakePlayer.create(world, profile);
 	}
 
+	@Override
+	public boolean isSpecialFakePlayer(ServerPlayer player) {
+		return player instanceof FakePlayer;
+	}
+
 	private record RegistryWrapperImpl<T>(
 		ResourceLocation name, ForgeRegistry<T> registry
 	) implements RegistryWrappers.RegistryWrapper<T> {

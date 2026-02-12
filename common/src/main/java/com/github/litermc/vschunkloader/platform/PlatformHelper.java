@@ -176,24 +176,32 @@ public interface PlatformHelper {
 	CreativeModeTab.Builder newCreativeModeTab();
 
 	/**
-	* Create a new fake player.
-	*
-	* @param level   The level the player should be created in.
-	* @param profile The user this player should mimic.
-	* @return The newly constructed fake player.
-	*/
+	 * Create a new fake player.
+	 *
+	 * @param level   The level the player should be created in.
+	 * @param profile The user this player should mimic.
+	 * @return The newly constructed fake player.
+	 */
 	ServerPlayer createFakePlayer(ServerLevel level, GameProfile profile);
 
 	/**
-	* Determine if a player is not a real player.
-	*
-	* @param player The player to check.
-	* @return Whether this player is fake.
-	*/
+	 * Determine if a player is not a real player.
+	 *
+	 * @param player The player to check.
+	 * @return Whether this player is fake.
+	 */
 	default boolean isFakePlayer(ServerPlayer player) {
 		// Any subclass of ServerPlayer (i.e. Forge's FakePlayer) is assumed to be a fake.
 		return player.connection == null || player.getClass() != ServerPlayer.class;
 	}
+
+	/**
+	 * Determine if a player the mod's fake player
+	 *
+	 * @param player The player to check.
+	 * @return Whether this player is this mod's fake player.
+	 */
+	boolean isSpecialFakePlayer(ServerPlayer player);
 
 	final class Instance {
 		static final @Nullable PlatformHelper INSTANCE;
