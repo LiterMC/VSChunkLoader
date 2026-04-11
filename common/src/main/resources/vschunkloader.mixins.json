@@ -13,7 +13,6 @@
 		"MixinSleepStatus"
 	],
 	"client": [
-		"client.MixinClientChunkCache",
 		"client.MixinLevelRenderer"
 	],
 	"server": [

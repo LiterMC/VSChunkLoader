@@ -52,14 +52,14 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 
-@Mixin(org.valkyrienskies.core.impl.shadow.Er.class)
+@Mixin(org.valkyrienskies.core.impl.shadow.Et.class)
 public abstract class MixinShipObjectServerWorld implements VsiServerShipWorld {
 	@Unique
-	private static final String M_clearNewUpdatedDeletedShipObjectsAndVoxelUpdates = "j";
+	private static final String M_clearNewUpdatedDeletedShipObjectsAndVoxelUpdates = "k";
 
 	@Shadow(remap = false)
 	@Final
-	private ArrayList<org.valkyrienskies.core.impl.shadow.Er.b> j;
+	private ArrayList<org.valkyrienskies.core.impl.shadow.Et.b> k;
 	@Unique
 	private final Set<VsiPlayer> disconnectedPlayers = new HashSet<>();
 	@Unique
@@ -70,8 +70,8 @@ public abstract class MixinShipObjectServerWorld implements VsiServerShipWorld {
 	private final Map<ChunkPos, AdvancedBitSet> loadedChunks = new HashMap<>();
 
 	@Unique
-	public ArrayList<org.valkyrienskies.core.impl.shadow.Er.b> getVoxelShapeUpdatesList() {
-		return this.j;
+	public ArrayList<org.valkyrienskies.core.impl.shadow.Et.b> getVoxelShapeUpdatesList() {
+		return this.k;
 	}
 
 	@ModifyVariable(method = "setPlayers", at = @At("HEAD"), remap = false)
@@ -163,21 +163,21 @@ public abstract class MixinShipObjectServerWorld implements VsiServerShipWorld {
 
 	@Inject(method = M_clearNewUpdatedDeletedShipObjectsAndVoxelUpdates + "()V", at = @At("HEAD"), remap = false)
 	public void clearNewUpdatedDeletedShipObjectsAndVoxelUpdates(final CallbackInfo ci) {
-		for (final org.valkyrienskies.core.impl.shadow.Er.b updates : this.getVoxelShapeUpdatesList()) {
+		for (final org.valkyrienskies.core.impl.shadow.Et.b updates : this.getVoxelShapeUpdatesList()) {
 			final ServerLevel level = LevelUtil.getLevel(updates.a());
 			if (level == null) {
 				continue;
 			}
 			final ChunkSensor sensor = ChunkSensor.get(level);
 			final int maxSectionCount = level.getSectionsCount();
-			for (final org.valkyrienskies.core.impl.shadow.Il update : updates.b()) {
+			for (final org.valkyrienskies.core.impl.shadow.Ip update : updates.b()) {
 				final int x = update.a(), z = update.c();
 				if (VSGameUtilsKt.isChunkInShipyard(level, x, z)) {
 					continue;
 				}
 				final int y = level.getSectionIndexFromSectionY(update.b());
 				final ChunkPos pos = new ChunkPos(x, z);
-				final boolean isload = update.d() != org.valkyrienskies.core.impl.shadow.Ip.DELETE;
+				final boolean isload = update.d() != org.valkyrienskies.core.impl.shadow.It.DELETE;
 				if (isload) {
 					final AdvancedBitSet sections = this.loadedChunks.computeIfAbsent(pos, (pos0) -> new AdvancedBitSet(maxSectionCount));
 					if (sections.set(y) && sections.count() == maxSectionCount) {

@@ -30,6 +30,6 @@ side = "BOTH"
 [[dependencies.${mod_id}]]
 modId = "valkyrienskies"
 mandatory = true
-versionRange = "[2.4,2.5)"
+versionRange = "[${vs2_version_min},${vs2_version_max})"
 ordering = "AFTER"
 side = "BOTH"
