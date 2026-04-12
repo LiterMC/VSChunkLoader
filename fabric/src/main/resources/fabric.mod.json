@@ -35,4 +35,3 @@
 		"valkyrienskies": ">=${vs2_version_min} <${vs2_version_max}"
 	}
 }
-  
